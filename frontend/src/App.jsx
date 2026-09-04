@@ -63,7 +63,7 @@ function AppRoutes() {
         <Route path="deliveries" element={<DeliveriesDashboard />} />
         <Route path="reports" element={<ShortageReportsPage />} />
         <Route path="smart-priority" element={<SmartPriorityDashboard />} />
-        <Route path="register-officer" element={<OfficerRegistrationPage />} />
+        <Route path="register-officer" element={<OfficerRegisterPage />} />
       </Route>
 
       {/* Protected Admin Control Center Routes (Member 3 & Member 4) */}
