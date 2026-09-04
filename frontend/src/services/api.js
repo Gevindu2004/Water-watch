@@ -19,6 +19,13 @@ api.interceptors.request.use(config => {
   return config;
 }, error => Promise.reject(error));
 
+// Helper for district param
+const withDistrict = (url, district) => {
+  if (!district || district === 'All') return url;
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}district=${encodeURIComponent(district)}`;
+};
+
 // Auth Service
 export const authService = {
   login: (credentials) => api.post('/auth/login', credentials),
@@ -27,7 +34,7 @@ export const authService = {
 
 // Bowser API endpoints
 export const bowserService = {
-  getAll: () => api.get('/bowsers'),
+  getAll: (district) => api.get(withDistrict('/bowsers', district)),
   create: (data) => api.post('/bowsers', data),
   update: (id, data) => api.put(`/bowsers/${id}`, data),
   updateStatus: (id, status, currentLocation) => api.patch(`/bowsers/${id}/status`, { status, currentLocation }),
@@ -36,7 +43,7 @@ export const bowserService = {
 
 // Delivery API endpoints
 export const deliveryService = {
-  getAll: () => api.get('/deliveries'),
+  getAll: (district) => api.get(withDistrict('/deliveries', district)),
   create: (data) => api.post('/deliveries', data),
   update: (id, data) => api.put(`/deliveries/${id}`, data),
   updateStatus: (id, status) => api.patch(`/deliveries/${id}/status`, { status }),
@@ -46,14 +53,14 @@ export const deliveryService = {
 
 // Water Shortage Reports API endpoints
 export const reportService = {
-  getAll: () => api.get('/water-reports'),
+  getAll: (district) => api.get(withDistrict('/water-reports', district)),
   verify: (id, statusPayload) => api.patch(`/water-reports/${id}/verify`, statusPayload)
 };
 
 // Tank Monitoring API endpoints
 export const tankService = {
-  getAll: () => api.get('/tanks'),
-  getAlerts: () => api.get('/tanks/alerts'),
+  getAll: (district) => api.get(withDistrict('/tanks', district)),
+  getAlerts: (district) => api.get(withDistrict('/tanks/alerts', district)),
   getById: (id) => api.get(`/tanks/${id}`),
   updateLevel: (id, payload) => api.patch(`/tanks/${id}/level`, payload),
   getHistory: (id) => api.get(`/tanks/${id}/history`)
@@ -61,16 +68,16 @@ export const tankService = {
 
 // Admin Control Center API endpoints
 export const adminService = {
-  getDashboard: () => api.get('/admin/dashboard'),
+  getDashboard: (district) => api.get(withDistrict('/admin/dashboard', district)),
   getUsers: () => api.get('/admin/users'),
   updateUserStatus: (id, status) => api.patch(`/admin/users/${id}/status`, { status }),
   updateUserRole: (id, role) => api.patch(`/admin/users/${id}/role`, { role }),
-  getAnalytics: () => api.get('/admin/analytics')
+  getAnalytics: (district) => api.get(withDistrict('/admin/analytics', district))
 };
 
 // Smart AI Priority Engine API endpoints
 export const aiService = {
-  getPriorities: () => api.get('/priorities'),
+  getPriorities: (district) => api.get(withDistrict('/priorities', district)),
   getVillagePriority: (villageId) => api.get(`/priorities/${villageId}`),
   getRecommendation: () => api.get('/ai/recommendation'),
   getExplanation: (payload) => api.post('/ai/explanation', payload),

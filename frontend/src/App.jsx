@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { DistrictProvider } from './context/DistrictContext';
 import LandingPage from './pages/LandingPage';
 import OfficerLayout from './components/OfficerLayout';
 import AdminLayout from './components/AdminLayout';
@@ -94,12 +95,16 @@ function AppRoutes() {
   );
 }
 
+import { DistrictProvider } from './context/DistrictContext';
+
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
+      <DistrictProvider>
+        <Router>
+          <AppRoutes />
+        </Router>
+      </DistrictProvider>
     </AuthProvider>
   );
 }

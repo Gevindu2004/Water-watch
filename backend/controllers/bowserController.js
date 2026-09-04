@@ -5,11 +5,17 @@ const { getMongoStatus, memoryStore } = require('../config/db');
 // @route   GET /api/bowsers
 const getAllBowsers = async (req, res, next) => {
   try {
+    const { district } = req.query;
     if (getMongoStatus()) {
-      const bowsers = await Bowser.find().sort({ createdAt: -1 });
-      return res.status(200).json({ success: true, count: bowsers.length, data: bowsers });
+      const filter = (district && district !== 'All') ? { district } : {};
+      const bowsers = await Bowser.find(filter).sort({ createdAt: -1 });
+      return res.status(200).json({ success: true, count: bowsers.length, data: bowsers, bowsers });
     } else {
-      return res.status(200).json({ success: true, count: memoryStore.bowsers.length, data: memoryStore.bowsers });
+      let bowsers = memoryStore.bowsers;
+      if (district && district !== 'All') {
+        bowsers = bowsers.filter(b => b.district === district);
+      }
+      return res.status(200).json({ success: true, count: bowsers.length, data: bowsers, bowsers });
     }
   } catch (error) {
     next(error);

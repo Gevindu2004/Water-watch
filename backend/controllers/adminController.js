@@ -9,54 +9,75 @@ const { getMongoStatus, memoryStore } = require('../config/db');
 // @route   GET /api/admin/dashboard
 const getAdminDashboard = async (req, res, next) => {
   try {
+    const { district } = req.query;
     if (getMongoStatus()) {
-      const tanksCount = await Tank.countDocuments();
-      const criticalTanks = await Tank.countDocuments({ status: 'CRITICAL' });
-      const activeShortages = await WaterReport.countDocuments({ status: { $in: ['Pending', 'Verified'] } });
-      const activeBowsers = await Bowser.countDocuments({ status: { $in: ['Available', 'On The Way', 'Distributing'] } });
-      const todaysDeliveries = await Delivery.countDocuments();
+      const tankFilter = (district && district !== 'All') ? { district } : {};
+      const criticalTankFilter = (district && district !== 'All') ? { district, status: 'CRITICAL' } : { status: 'CRITICAL' };
+      const reportFilter = (district && district !== 'All') ? { district, status: { $in: ['Pending', 'Verified'] } } : { status: { $in: ['Pending', 'Verified'] } };
+      const bowserFilter = (district && district !== 'All') ? { district, status: { $in: ['Available', 'On The Way', 'Distributing'] } } : { status: { $in: ['Available', 'On The Way', 'Distributing'] } };
+      const deliveryFilter = (district && district !== 'All') ? { district } : {};
+
+      const tanksCount = await Tank.countDocuments(tankFilter);
+      const criticalTanks = await Tank.countDocuments(criticalTankFilter);
+      const activeShortages = await WaterReport.countDocuments(reportFilter);
+      const activeBowsers = await Bowser.countDocuments(bowserFilter);
+      const todaysDeliveries = await Delivery.countDocuments(deliveryFilter);
       
-      const criticalTanksList = await Tank.find({ status: 'CRITICAL' });
-      const recentReports = await WaterReport.find().sort({ createdAt: -1 }).limit(5);
-      const activeDeliveriesList = await Delivery.find().sort({ createdAt: -1 }).limit(5);
+      const criticalTanksList = await Tank.find(criticalTankFilter);
+      const recentReports = await WaterReport.find((district && district !== 'All') ? { district } : {}).sort({ createdAt: -1 }).limit(5);
+      const activeDeliveriesList = await Delivery.find(deliveryFilter).sort({ createdAt: -1 }).limit(5);
 
       return res.status(200).json({
         success: true,
-        metrics: {
-          tanksMonitored: tanksCount || 4,
+        stats: {
+          totalTanks: tanksCount || 4,
           criticalTanks: criticalTanks || 1,
           activeShortages: activeShortages || 8,
           activeBowsers: activeBowsers || 6,
-          todaysDeliveries: todaysDeliveries || 12,
-          criticalVillages: 2
+          todayDeliveries: todaysDeliveries || 12,
+          criticalVillages: criticalTanks || 2
         },
         criticalTanks: criticalTanksList,
         criticalVillages: [
-          { village: 'Siripura', status: 'CRITICAL', daysWithoutWater: 3, affected: 120, tankLevel: '18%' },
-          { village: 'Bakamuna', status: 'WARNING', daysWithoutWater: 2, affected: 80, tankLevel: '25%' }
+          { villageId: 'v-siripura', name: 'Siripura', priorityScore: 91, status: 'CRITICAL', daysWithoutWater: 4, population: 4200 },
+          { villageId: 'v-mihintale', name: 'Mihintale South', priorityScore: 88, status: 'CRITICAL', daysWithoutWater: 4, population: 5800 },
+          { villageId: 'v-suriyawewa', name: 'Suriyawewa Colony', priorityScore: 85, status: 'CRITICAL', daysWithoutWater: 5, population: 6400 }
         ],
         activeDeliveries: activeDeliveriesList,
         recentReports
       });
     } else {
-      const criticalTanksList = memoryStore.tanks.filter(t => t.status === 'CRITICAL');
+      let tanks = memoryStore.tanks;
+      let bowsers = memoryStore.bowsers;
+      let deliveries = memoryStore.deliveries;
+      let reports = memoryStore.waterReports;
+
+      if (district && district !== 'All') {
+        tanks = tanks.filter(t => t.district === district);
+        bowsers = bowsers.filter(b => b.district === district);
+        deliveries = deliveries.filter(d => d.district === district);
+        reports = reports.filter(r => r.district === district);
+      }
+
+      const criticalTanksList = tanks.filter(t => t.status === 'CRITICAL');
       return res.status(200).json({
         success: true,
-        metrics: {
-          tanksMonitored: memoryStore.tanks.length,
+        stats: {
+          totalTanks: tanks.length,
           criticalTanks: criticalTanksList.length,
-          activeShortages: memoryStore.waterReports.filter(r => r.status !== 'Resolved').length,
-          activeBowsers: memoryStore.bowsers.filter(b => b.status !== 'Completed').length,
-          todaysDeliveries: memoryStore.deliveries.length,
-          criticalVillages: 2
+          activeShortages: reports.filter(r => r.status !== 'Resolved').length,
+          activeBowsers: bowsers.filter(b => b.status !== 'Completed').length,
+          todayDeliveries: deliveries.length,
+          criticalVillages: criticalTanksList.length || 2
         },
         criticalTanks: criticalTanksList,
         criticalVillages: [
-          { village: 'Siripura', status: 'CRITICAL', daysWithoutWater: 3, affected: 120, tankLevel: '18%' },
-          { village: 'Bakamuna', status: 'WARNING', daysWithoutWater: 2, affected: 80, tankLevel: '25%' }
+          { villageId: 'v-siripura', name: 'Siripura (Polonnaruwa)', priorityScore: 91, status: 'CRITICAL', daysWithoutWater: 4, population: 4200 },
+          { villageId: 'v-mihintale', name: 'Mihintale (Anuradhapura)', priorityScore: 88, status: 'CRITICAL', daysWithoutWater: 4, population: 5800 },
+          { villageId: 'v-suriyawewa', name: 'Suriyawewa (Hambantota)', priorityScore: 85, status: 'CRITICAL', daysWithoutWater: 5, population: 6400 }
         ],
-        activeDeliveries: memoryStore.deliveries,
-        recentReports: memoryStore.waterReports
+        activeDeliveries: deliveries,
+        recentReports: reports
       });
     }
   } catch (error) {

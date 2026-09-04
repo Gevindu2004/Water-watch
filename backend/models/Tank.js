@@ -6,6 +6,12 @@ const tankSchema = new mongoose.Schema({
     required: [true, 'Tank name is required'],
     trim: true
   },
+  district: {
+    type: String,
+    required: [true, 'District name is required'],
+    trim: true,
+    default: 'Polonnaruwa'
+  },
   location: {
     type: String,
     required: [true, 'Tank location is required'],

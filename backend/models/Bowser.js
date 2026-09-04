@@ -17,6 +17,11 @@ const bowserSchema = new mongoose.Schema({
     required: [true, 'Capacity in Liters is required'],
     min: [100, 'Capacity must be at least 100L']
   },
+  district: {
+    type: String,
+    default: 'Polonnaruwa',
+    trim: true
+  },
   currentLocation: {
     type: String,
     default: 'Polonnaruwa Central Depot',

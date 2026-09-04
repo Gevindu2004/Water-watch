@@ -1,20 +1,21 @@
 import React from 'react';
 import { NavLink, useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useDistrict } from '../context/DistrictContext';
 import { 
-  Droplet, 
   ShieldAlert, 
   Layers, 
   Users, 
   BarChart3, 
   LogOut, 
-  Cpu,
-  AlertTriangle,
-  Server
+  Cpu, 
+  Server,
+  MapPin
 } from 'lucide-react';
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
+  const { selectedDistrict, setSelectedDistrict, DRY_ZONE_DISTRICTS } = useDistrict();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -34,10 +35,26 @@ export default function AdminLayout() {
             <div>
               <div className="brand-title">WATERWATCH</div>
               <div className="brand-subtitle" style={{ color: '#c084fc', fontWeight: '700' }}>
-                ADMIN CONTROL CENTER
+                NATIONAL CONTROL CENTER
               </div>
             </div>
           </NavLink>
+
+          {/* District Selector Pill */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(30, 41, 59, 0.8)', padding: '0.35rem 0.75rem', borderRadius: '9999px', border: '1px solid rgba(139, 92, 246, 0.4)' }}>
+            <MapPin size={15} color="#c084fc" />
+            <select 
+              value={selectedDistrict}
+              onChange={(e) => setSelectedDistrict(e.target.value)}
+              style={{ background: 'transparent', border: 'none', color: '#c084fc', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', outline: 'none' }}
+            >
+              {DRY_ZONE_DISTRICTS.map(d => (
+                <option key={d.id} value={d.id} style={{ background: '#0f172a', color: '#f8fafc' }}>
+                  {d.name} {d.id !== 'All' ? `(${d.region})` : ''}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <ul className="nav-links">
             <li>
@@ -78,7 +95,7 @@ export default function AdminLayout() {
                 {user?.name || 'Administrator'}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#c084fc', fontWeight: '700' }}>
-                ROLE: ADMINISTRATOR
+                ADMIN • {selectedDistrict}
               </div>
             </div>
 

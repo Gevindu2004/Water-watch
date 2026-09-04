@@ -1,20 +1,22 @@
 import React from 'react';
 import { NavLink, useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useDistrict } from '../context/DistrictContext';
 import { 
   Droplet, 
   LayoutDashboard, 
   Truck, 
   Calendar, 
   AlertTriangle, 
-  Bell, 
   LogOut, 
   ShieldCheck,
-  User
+  User,
+  MapPin
 } from 'lucide-react';
 
 export default function OfficerLayout() {
   const { user, logout } = useAuth();
+  const { selectedDistrict, setSelectedDistrict, DRY_ZONE_DISTRICTS } = useDistrict();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -34,10 +36,26 @@ export default function OfficerLayout() {
             <div>
               <div className="brand-title">WATERWATCH</div>
               <div className="brand-subtitle" style={{ color: '#60a5fa', fontWeight: '600' }}>
-                Officer Operations Portal
+                Dry Zone Relief Network
               </div>
             </div>
           </NavLink>
+
+          {/* District Selector Pill */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(30, 41, 59, 0.8)', padding: '0.35rem 0.75rem', borderRadius: '9999px', border: '1px solid rgba(59, 130, 246, 0.4)' }}>
+            <MapPin size={15} color="#60a5fa" />
+            <select 
+              value={selectedDistrict}
+              onChange={(e) => setSelectedDistrict(e.target.value)}
+              style={{ background: 'transparent', border: 'none', color: '#60a5fa', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', outline: 'none' }}
+            >
+              {DRY_ZONE_DISTRICTS.map(d => (
+                <option key={d.id} value={d.id} style={{ background: '#0f172a', color: '#f8fafc' }}>
+                  {d.name} {d.id !== 'All' ? `(${d.region})` : ''}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <ul className="nav-links">
             <li>
@@ -80,7 +98,7 @@ export default function OfficerLayout() {
                 {user?.name || 'Water Board Officer'}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#60a5fa', fontWeight: '600' }}>
-                Role: OFFICER ({user?.email || 'officer@test.com'})
+                OFFICER • {selectedDistrict}
               </div>
             </div>
 

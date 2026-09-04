@@ -6,6 +6,11 @@ const deliverySchema = new mongoose.Schema({
     required: [true, 'Bowser ID is required'],
     trim: true
   },
+  district: {
+    type: String,
+    default: 'Polonnaruwa',
+    trim: true
+  },
   villageId: {
     type: String,
     required: [true, 'Village ID/Name is required'],

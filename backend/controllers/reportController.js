@@ -5,11 +5,17 @@ const { getMongoStatus, memoryStore } = require('../config/db');
 // @route   GET /api/water-reports
 const getAllReports = async (req, res, next) => {
   try {
+    const { district } = req.query;
     if (getMongoStatus()) {
-      const reports = await WaterReport.find().sort({ createdAt: -1 });
-      return res.status(200).json({ success: true, count: reports.length, data: reports });
+      const filter = (district && district !== 'All') ? { district } : {};
+      const reports = await WaterReport.find(filter).sort({ createdAt: -1 });
+      return res.status(200).json({ success: true, count: reports.length, data: reports, reports });
     } else {
-      return res.status(200).json({ success: true, count: memoryStore.waterReports.length, data: memoryStore.waterReports });
+      let reports = memoryStore.waterReports;
+      if (district && district !== 'All') {
+        reports = reports.filter(r => r.district === district);
+      }
+      return res.status(200).json({ success: true, count: reports.length, data: reports, reports });
     }
   } catch (error) {
     next(error);

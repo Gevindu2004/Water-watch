@@ -32,39 +32,123 @@ const calculatePriority = (item) => {
 
 const villageScoringData = [
   {
+    villageId: 'v-siripura',
+    villageName: 'Siripura',
     village: 'Siripura',
-    daysWithoutWater: 3,
-    peopleAffected: 120,
+    district: 'Polonnaruwa',
+    score: 91,
+    status: 'CRITICAL',
+    tankLevel: 18,
     tankLevelPct: 18,
-    daysSinceDelivery: 4,
-    hasAlternativeSource: false,
+    daysWithoutWater: 4,
+    peopleAffected: 4200,
+    population: 4200,
+    vulnerableFacility: 'Rural Hospital & Maternity Ward',
     nearbyTank: 'Minneriya Tank (18% CRITICAL)'
   },
   {
-    village: 'Medirigiriya',
+    villageId: 'v-mihintale',
+    villageName: 'Mihintale South',
+    village: 'Mihintale South',
+    district: 'Anuradhapura',
+    score: 88,
+    status: 'CRITICAL',
+    tankLevel: 15,
+    tankLevelPct: 15,
     daysWithoutWater: 4,
-    peopleAffected: 60,
+    peopleAffected: 5800,
+    population: 5800,
+    vulnerableFacility: 'Mihintale Base Hospital & University Hostel',
+    nearbyTank: 'Nuwara Wewa (15% CRITICAL)'
+  },
+  {
+    villageId: 'v-suriyawewa',
+    villageName: 'Suriyawewa Colony',
+    village: 'Suriyawewa Colony',
+    district: 'Hambantota',
+    score: 85,
+    status: 'CRITICAL',
+    tankLevel: 12,
+    tankLevelPct: 12,
+    daysWithoutWater: 5,
+    peopleAffected: 6400,
+    population: 6400,
+    vulnerableFacility: 'Suriyawewa Primary School & Clinic',
+    nearbyTank: 'Ridiyagama Reservoir (12% CRITICAL)'
+  },
+  {
+    villageId: 'v-anamaduwa',
+    villageName: 'Anamaduwa West',
+    village: 'Anamaduwa West',
+    district: 'Puttalam',
+    score: 81,
+    status: 'CRITICAL',
+    tankLevel: 17,
+    tankLevelPct: 17,
+    daysWithoutWater: 3,
+    peopleAffected: 3900,
+    population: 3900,
+    vulnerableFacility: 'Elderly Care Center',
+    nearbyTank: 'Tabbowa Tank (17% CRITICAL)'
+  },
+  {
+    villageId: 'v-medirigiriya',
+    villageName: 'Medirigiriya Block B',
+    village: 'Medirigiriya Block B',
+    district: 'Polonnaruwa',
+    score: 78,
+    status: 'HIGH',
+    tankLevel: 35,
     tankLevelPct: 35,
-    daysSinceDelivery: 3,
-    hasAlternativeSource: false,
+    daysWithoutWater: 3,
+    peopleAffected: 6100,
+    population: 6100,
+    vulnerableFacility: 'Primary School & Day Care',
     nearbyTank: 'Kaudulla Tank (35% WARNING)'
   },
   {
-    village: 'Bakamuna',
-    daysWithoutWater: 2,
-    peopleAffected: 80,
+    villageId: 'v-vavunathivu',
+    villageName: 'Vavunathivu East',
+    village: 'Vavunathivu East',
+    district: 'Batticaloa',
+    score: 76,
+    status: 'HIGH',
+    tankLevel: 14,
+    tankLevelPct: 14,
+    daysWithoutWater: 3,
+    peopleAffected: 4500,
+    population: 4500,
+    vulnerableFacility: 'None',
+    nearbyTank: 'Unnichchai Tank (14% CRITICAL)'
+  },
+  {
+    villageId: 'v-bakamuna',
+    villageName: 'Bakamuna South',
+    village: 'Bakamuna South',
+    district: 'Polonnaruwa',
+    score: 65,
+    status: 'MEDIUM',
+    tankLevel: 25,
     tankLevelPct: 25,
-    daysSinceDelivery: 2,
-    hasAlternativeSource: false,
+    daysWithoutWater: 2,
+    peopleAffected: 3800,
+    population: 3800,
+    vulnerableFacility: 'None',
     nearbyTank: 'Minneriya Tank (18% CRITICAL)'
   },
   {
-    village: 'Welikanda',
-    daysWithoutWater: 1,
-    peopleAffected: 200,
+    villageId: 'v-welikanda',
+    villageName: 'Welikanda East',
+    village: 'Welikanda East',
+    district: 'Polonnaruwa',
+    score: 42,
+    status: 'LOW',
+    tankLevel: 65,
     tankLevelPct: 65,
-    daysSinceDelivery: 1,
-    hasAlternativeSource: true,
+    daysWithoutWater: 1,
+    peopleAffected: 2900,
+    population: 2900,
+    vulnerableFacility: 'None',
     nearbyTank: 'Giritale Tank (65% NORMAL)'
   }
 ];
@@ -73,23 +157,35 @@ const villageScoringData = [
 // @route   GET /api/priorities
 const getPriorities = async (req, res, next) => {
   try {
-    const ranked = villageScoringData.map(v => {
+    const { district } = req.query;
+    let list = villageScoringData;
+    if (district && district !== 'All') {
+      list = list.filter(v => v.district === district);
+    }
+
+    const ranked = list.map(v => {
       const calc = calculatePriority(v);
       return {
+        villageId: v.villageId,
+        villageName: v.villageName,
         village: v.village,
-        priorityScore: calc.score,
-        priorityLevel: calc.priorityLevel,
+        district: v.district,
+        priorityScore: v.score || calc.score,
+        score: v.score || calc.score,
+        priorityLevel: v.status || calc.priorityLevel,
+        status: v.status || calc.priorityLevel,
         daysWithoutWater: v.daysWithoutWater,
         peopleAffected: v.peopleAffected,
-        tankLevelPct: v.tankLevelPct,
+        population: v.population || v.peopleAffected,
+        tankLevelPct: v.tankLevelPct || v.tankLevel,
+        tankLevel: v.tankLevel || v.tankLevelPct,
+        vulnerableFacility: v.vulnerableFacility || 'None',
         nearbyTank: v.nearbyTank,
-        daysSinceDelivery: v.daysSinceDelivery,
-        hasAlternativeSource: v.hasAlternativeSource,
         breakdown: calc.breakdown
       };
     }).sort((a, b) => b.priorityScore - a.priorityScore);
 
-    return res.status(200).json({ success: true, count: ranked.length, data: ranked });
+    return res.status(200).json({ success: true, count: ranked.length, data: ranked, priorities: ranked });
   } catch (error) {
     next(error);
   }

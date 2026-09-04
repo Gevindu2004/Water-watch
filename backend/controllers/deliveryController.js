@@ -27,11 +27,17 @@ const syncBowserStatus = async (bowserId, deliveryStatus) => {
 // @route   GET /api/deliveries
 const getAllDeliveries = async (req, res, next) => {
   try {
+    const { district } = req.query;
     if (getMongoStatus()) {
-      const deliveries = await Delivery.find().sort({ createdAt: -1 });
-      return res.status(200).json({ success: true, count: deliveries.length, data: deliveries });
+      const filter = (district && district !== 'All') ? { district } : {};
+      const deliveries = await Delivery.find(filter).sort({ createdAt: -1 });
+      return res.status(200).json({ success: true, count: deliveries.length, data: deliveries, deliveries });
     } else {
-      return res.status(200).json({ success: true, count: memoryStore.deliveries.length, data: memoryStore.deliveries });
+      let deliveries = memoryStore.deliveries;
+      if (district && district !== 'All') {
+        deliveries = deliveries.filter(d => d.district === district);
+      }
+      return res.status(200).json({ success: true, count: deliveries.length, data: deliveries, deliveries });
     }
   } catch (error) {
     next(error);

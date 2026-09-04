@@ -13,11 +13,17 @@ const calculateStatus = (pct) => {
 // @route   GET /api/tanks
 const getAllTanks = async (req, res, next) => {
   try {
+    const { district } = req.query;
     if (getMongoStatus()) {
-      const tanks = await Tank.find().sort({ percentage: 1 });
-      return res.status(200).json({ success: true, count: tanks.length, data: tanks });
+      const filter = (district && district !== 'All') ? { district } : {};
+      const tanks = await Tank.find(filter).sort({ percentage: 1 });
+      return res.status(200).json({ success: true, count: tanks.length, data: tanks, tanks });
     } else {
-      return res.status(200).json({ success: true, count: memoryStore.tanks.length, data: memoryStore.tanks });
+      let tanks = memoryStore.tanks;
+      if (district && district !== 'All') {
+        tanks = tanks.filter(t => t.district === district);
+      }
+      return res.status(200).json({ success: true, count: tanks.length, data: tanks, tanks });
     }
   } catch (error) {
     next(error);
@@ -28,12 +34,18 @@ const getAllTanks = async (req, res, next) => {
 // @route   GET /api/tanks/alerts
 const getTankAlerts = async (req, res, next) => {
   try {
+    const { district } = req.query;
     if (getMongoStatus()) {
-      const alerts = await Tank.find({ status: { $in: ['CRITICAL', 'WARNING', 'LOW'] } });
-      return res.status(200).json({ success: true, count: alerts.length, data: alerts });
+      const filter = { status: { $in: ['CRITICAL', 'WARNING', 'LOW'] } };
+      if (district && district !== 'All') filter.district = district;
+      const alerts = await Tank.find(filter);
+      return res.status(200).json({ success: true, count: alerts.length, data: alerts, alerts });
     } else {
-      const alerts = memoryStore.tanks.filter(t => t.status === 'CRITICAL' || t.status === 'WARNING' || t.status === 'LOW');
-      return res.status(200).json({ success: true, count: alerts.length, data: alerts });
+      let alerts = memoryStore.tanks.filter(t => t.status === 'CRITICAL' || t.status === 'WARNING' || t.status === 'LOW');
+      if (district && district !== 'All') {
+        alerts = alerts.filter(t => t.district === district);
+      }
+      return res.status(200).json({ success: true, count: alerts.length, data: alerts, alerts });
     }
   } catch (error) {
     next(error);

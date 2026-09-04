@@ -6,6 +6,11 @@ const waterReportSchema = new mongoose.Schema({
     required: [true, 'Village name is required'],
     trim: true
   },
+  district: {
+    type: String,
+    default: 'Polonnaruwa',
+    trim: true
+  },
   waterAvailable: {
     type: String,
     enum: ['Yes', 'No'],
