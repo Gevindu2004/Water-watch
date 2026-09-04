@@ -8,21 +8,25 @@ const {
   getDeliveriesByVillage,
   updateQueue
 } = require('../controllers/deliveryController');
+const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
+
+// Public endpoint for Member 1 Resident Portal & Village Lookups
+router.route('/village/:villageId').get(getDeliveriesByVillage);
+
+// Public endpoint for Residents to indicate attendance (queue update)
+router.route('/:id/queue').patch(updateQueue);
+
+// Protected Official Endpoints (Officer & Admin)
+router.use(authenticateToken);
 
 router.route('/')
   .get(getAllDeliveries)
-  .post(createDelivery);
+  .post(authorizeRoles('officer', 'admin'), createDelivery);
 
 router.route('/:id')
-  .put(updateDelivery);
+  .put(authorizeRoles('officer', 'admin'), updateDelivery);
 
 router.route('/:id/status')
-  .patch(updateDeliveryStatus);
-
-router.route('/village/:villageId')
-  .get(getDeliveriesByVillage);
-
-router.route('/:id/queue')
-  .patch(updateQueue);
+  .patch(authorizeRoles('officer', 'admin'), updateDeliveryStatus);
 
 module.exports = router;

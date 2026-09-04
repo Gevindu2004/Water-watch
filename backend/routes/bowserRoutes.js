@@ -4,17 +4,22 @@ const {
   getAllBowsers,
   createBowser,
   updateBowser,
-  updateBowserStatus
+  updateBowserStatus,
+  deleteBowser
 } = require('../controllers/bowserController');
+const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
+
+router.use(authenticateToken);
 
 router.route('/')
   .get(getAllBowsers)
-  .post(createBowser);
+  .post(authorizeRoles('officer', 'admin'), createBowser);
 
 router.route('/:id')
-  .put(updateBowser);
+  .put(authorizeRoles('officer', 'admin'), updateBowser)
+  .delete(authorizeRoles('officer', 'admin'), deleteBowser);
 
 router.route('/:id/status')
-  .patch(updateBowserStatus);
+  .patch(authorizeRoles('officer', 'admin'), updateBowserStatus);
 
 module.exports = router;

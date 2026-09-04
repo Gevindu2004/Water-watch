@@ -144,9 +144,35 @@ const updateBowserStatus = async (req, res, next) => {
   }
 };
 
+// @desc    Delete or deactivate bowser
+// @route   DELETE /api/bowsers/:id
+const deleteBowser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (getMongoStatus()) {
+      let query = id.match(/^[0-9a-fA-F]{24}$/) ? { _id: id } : { bowserId: id };
+      const bowser = await Bowser.findOneAndDelete(query);
+      if (!bowser) {
+        return res.status(404).json({ success: false, message: `Bowser ${id} not found.` });
+      }
+      return res.status(200).json({ success: true, message: `Bowser ${id} deactivated/deleted successfully.` });
+    } else {
+      const index = memoryStore.bowsers.findIndex(b => b._id === id || b.bowserId === id);
+      if (index === -1) {
+        return res.status(404).json({ success: false, message: `Bowser ${id} not found.` });
+      }
+      memoryStore.bowsers.splice(index, 1);
+      return res.status(200).json({ success: true, message: `Bowser ${id} deactivated/deleted successfully.` });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllBowsers,
   createBowser,
   updateBowser,
-  updateBowserStatus
+  updateBowserStatus,
+  deleteBowser
 };

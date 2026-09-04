@@ -85,6 +85,41 @@ const memoryStore = {
       peopleWaiting: 45,
       createdAt: new Date('2026-09-04T06:30:00.000Z')
     }
+  ],
+  waterReports: [
+    {
+      _id: 'rep-301',
+      village: 'Siripura',
+      waterAvailable: 'No',
+      lastReceivedDate: '3 days ago',
+      peopleAffected: 120,
+      description: 'Severe drought in Siripura North division. Community wells completely dry for 3 consecutive days.',
+      status: 'Pending',
+      priority: 'High',
+      createdAt: new Date('2026-09-04T06:00:00.000Z')
+    },
+    {
+      _id: 'rep-302',
+      village: 'Bakamuna',
+      waterAvailable: 'No',
+      lastReceivedDate: '2 days ago',
+      peopleAffected: 80,
+      description: 'Pipeline supply cut off due to main pump repair at Bakamuna station.',
+      status: 'Verified',
+      priority: 'Medium',
+      createdAt: new Date('2026-09-04T07:15:00.000Z')
+    },
+    {
+      _id: 'rep-303',
+      village: 'Welikanda',
+      waterAvailable: 'No',
+      lastReceivedDate: '1 day ago',
+      peopleAffected: 200,
+      description: 'Low water pressure in Welikanda central area.',
+      status: 'Pending',
+      priority: 'Low',
+      createdAt: new Date('2026-09-04T08:00:00.000Z')
+    }
   ]
 };
 
