@@ -1,5 +1,18 @@
 {
+  "name": "waterwatch-server",
+  "version": "1.0.0",
+  "description": "WaterWatch Polonnaruwa - Component 3 Tank Monitoring Backend API",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
   "dependencies": {
-    "express": "^5.2.1"
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongodb-memory-server": "^10.1.4",
+    "mongoose": "^8.9.5"
   }
 }
