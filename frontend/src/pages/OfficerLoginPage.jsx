@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Droplet, ShieldCheck, Lock, Mail, ArrowRight, AlertCircle } from 'lucide-react';
 
 export default function OfficerLoginPage() {
-  const [email, setEmail] = useState('officer@test.com');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +24,7 @@ export default function OfficerLoginPage() {
         navigate('/resident-preview');
       }
     } catch (err) {
-      setError(err.message || 'Login failed. Use officer@test.com / password123');
+      setError(err.message || 'Authentication failed. Please check your email and password.');
     } finally {
       setLoading(false);
     }
@@ -62,11 +62,11 @@ export default function OfficerLoginPage() {
           }}>
             <Droplet size={32} color="#ffffff" />
           </div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: '800', marginBottom: '0.3rem' }}>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: '800', marginBottom: '0.3rem', color: '#f8fafc' }}>
             WATERWATCH
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-            Official Water Supply Portal Authentication
+            Official Water Board Portal Authentication
           </p>
         </div>
 
@@ -88,7 +88,7 @@ export default function OfficerLoginPage() {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
+          <div className="form-group" style={{ marginBottom: '1.25rem' }}>
             <label className="form-label">Email Address</label>
             <div style={{ position: 'relative' }}>
               <Mail size={16} style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
@@ -99,12 +99,12 @@ export default function OfficerLoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="officer@test.com"
+                placeholder="officer@waterwatch.lk"
               />
             </div>
           </div>
 
-          <div className="form-group">
+          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
             <label className="form-label">Password</label>
             <div style={{ position: 'relative' }}>
               <Lock size={16} style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
@@ -123,29 +123,29 @@ export default function OfficerLoginPage() {
           <button
             type="submit"
             className="btn btn-primary"
-            style={{ width: '100%', padding: '0.8rem', marginTop: '1rem', fontSize: '0.95rem' }}
+            style={{ width: '100%', padding: '0.8rem', marginTop: '0.5rem', fontSize: '0.95rem', background: 'linear-gradient(135deg, #00f2fe, #4facfe)', color: '#0f172a', fontWeight: '800' }}
             disabled={loading}
           >
             {loading ? 'Authenticating...' : (
               <>
-                Sign In as Officer <ArrowRight size={16} />
+                Sign In to Portal <ArrowRight size={16} />
               </>
             )}
           </button>
         </form>
 
         <div style={{
-          marginTop: '2rem',
+          marginTop: '1.75rem',
           paddingTop: '1.25rem',
           borderTop: '1px solid var(--border-color)',
-          textAlign: 'center'
+          textAlign: 'center',
+          fontSize: '0.875rem',
+          color: '#94a3b8'
         }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-            Demo Officer Credentials:
-          </div>
-          <code style={{ fontSize: '0.85rem', color: 'var(--primary-cyan)', background: 'rgba(6, 182, 212, 0.1)', padding: '0.3rem 0.6rem', borderRadius: '6px' }}>
-            officer@test.com / password123
-          </code>
+          New Water Officer?{' '}
+          <Link to="/register" style={{ color: '#00f2fe', fontWeight: '700', textDecoration: 'none' }}>
+            Register New Account
+          </Link>
         </div>
       </div>
     </div>

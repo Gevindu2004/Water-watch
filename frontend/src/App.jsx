@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DistrictProvider } from './context/DistrictContext';
+import OfficerRegisterPage from './pages/OfficerRegisterPage';
 import LandingPage from './pages/LandingPage';
 import OfficerLayout from './components/OfficerLayout';
 import AdminLayout from './components/AdminLayout';
@@ -45,8 +46,10 @@ function AppRoutes() {
       {/* Landing Page */}
       <Route path="/" element={<LandingPage />} />
 
-      {/* Public Login Route */}
+      {/* Public Login & Registration Routes */}
       <Route path="/login" element={<OfficerLoginPage />} />
+      <Route path="/register" element={<OfficerRegisterPage />} />
+      <Route path="/officer/register" element={<OfficerRegisterPage />} />
 
       {/* Protected Officer Portal Routes (Member 2) */}
       <Route path="/officer" element={
@@ -89,7 +92,6 @@ function AppRoutes() {
       <Route path="/deliveries" element={<Navigate to="/officer/deliveries" replace />} />
       <Route path="/reports" element={<Navigate to="/officer/reports" replace />} />
       <Route path="/resident-preview" element={<ResidentQueueView />} />
-      <Route path="/api-docs" element={<ApiDocsPage />} />
 
       {/* Catch-all redirect to Landing Page */}
       <Route path="*" element={<Navigate to="/" replace />} />

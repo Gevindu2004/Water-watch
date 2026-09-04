@@ -195,29 +195,6 @@ export default function DeliveriesDashboard() {
         </div>
       </div>
 
-      {/* Demo Walkthrough Banner */}
-      <div className="demo-banner">
-        <div>
-          <div className="demo-title">
-            <Play size={18} />
-            Interactive Hackathon Demo Scenario
-          </div>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-            Click to run automated 7-step evaluation (Siripura WB-102 delivery scheduling & status updates).
-          </p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          {demoStatusMessage && (
-            <span style={{ fontSize: '0.8rem', color: 'var(--status-scheduled-text)', fontWeight: '600' }}>
-              {demoStatusMessage}
-            </span>
-          )}
-          <button className="btn btn-success btn-sm" onClick={runDemoScenario}>
-            <Play size={14} /> Run Demo Workflow
-          </button>
-        </div>
-      </div>
-
       {/* Overview Stats Cards */}
       <div className="stats-grid">
         <div className="stat-card">

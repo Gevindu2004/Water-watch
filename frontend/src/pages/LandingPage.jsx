@@ -127,9 +127,6 @@ export default function LandingPage() {
             <NavLink to="/resident-preview" className="btn btn-secondary btn-sm" style={{ borderColor: 'rgba(255,255,255,0.15)' }}>
               Resident Live Queue
             </NavLink>
-            <NavLink to="/api-docs" className="btn btn-secondary btn-sm" style={{ borderColor: 'rgba(255,255,255,0.15)' }}>
-              <Code size={14} /> API Specs
-            </NavLink>
             <NavLink to="/login" className="btn btn-primary btn-sm" style={{ background: 'linear-gradient(135deg, #00f2fe, #4facfe)', color: '#0f172a', fontWeight: '800' }}>
               Officer & Admin Portal Login
             </NavLink>
@@ -297,7 +294,7 @@ export default function LandingPage() {
       <section style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', padding: '0 2rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <span style={{ color: '#00f2fe', fontWeight: '800', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            INTERACTIVE DEMO
+            REAL-TIME DISPATCH TRACKING
           </span>
           <h2 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#f8fafc', marginTop: '0.25rem' }}>
             Live Village Bowser Arrival Tracker ({selectedDistrict})

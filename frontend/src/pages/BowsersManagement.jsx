@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { bowserService } from '../services/api';
 import { Truck, Plus, RefreshCw, Phone, User, MapPin, Edit, CheckCircle, AlertCircle, Search, Trash2 } from 'lucide-react';
 
-import { useDistrict } from '../context/DistrictContext';
+import { useDistrict, DRY_ZONE_DISTRICTS } from '../context/DistrictContext';
 
 export default function BowsersManagement() {
   const { selectedDistrict } = useDistrict();
@@ -348,12 +348,27 @@ export default function BowsersManagement() {
               </div>
 
               <div className="form-group">
+                <label className="form-label">Assigned District</label>
+                <select
+                  className="form-select"
+                  value={formData.district || selectedDistrict}
+                  onChange={(e) => setFormData({ ...formData, district: e.target.value, currentLocation: `${e.target.value} Central Depot` })}
+                >
+                  {DRY_ZONE_DISTRICTS.filter(d => d.id !== 'All').map(d => (
+                    <option key={d.id} value={d.id}>
+                      {d.name} ({d.region})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
                 <label className="form-label">Current Base / Location</label>
                 <input
                   type="text"
                   className="form-input"
                   required
-                  placeholder="Polonnaruwa Central Depot"
+                  placeholder={`${formData.district || selectedDistrict} Central Depot`}
                   value={formData.currentLocation}
                   onChange={(e) => setFormData({ ...formData, currentLocation: e.target.value })}
                 />

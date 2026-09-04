@@ -48,7 +48,7 @@ const getAllDeliveries = async (req, res, next) => {
 // @route   POST /api/deliveries
 const createDelivery = async (req, res, next) => {
   try {
-    const { bowserId, villageId, distributionPoint, scheduledDate, estimatedArrival, capacity, peopleWaiting } = req.body;
+    const { bowserId, district, villageId, distributionPoint, scheduledDate, estimatedArrival, capacity, peopleWaiting } = req.body;
 
     if (!bowserId || !villageId || !distributionPoint || !scheduledDate || !estimatedArrival) {
       return res.status(400).json({
@@ -59,10 +59,12 @@ const createDelivery = async (req, res, next) => {
 
     const deliveryCapacity = Number(capacity) || 5000;
     const waitingCount = Number(peopleWaiting) || 0;
+    const deliveryDistrict = district || 'Polonnaruwa';
 
     if (getMongoStatus()) {
       const delivery = await Delivery.create({
         bowserId,
+        district: deliveryDistrict,
         villageId,
         distributionPoint,
         scheduledDate,
@@ -79,6 +81,7 @@ const createDelivery = async (req, res, next) => {
       const newDelivery = {
         _id: 'del-' + Date.now(),
         bowserId,
+        district: deliveryDistrict,
         villageId,
         distributionPoint,
         scheduledDate,
