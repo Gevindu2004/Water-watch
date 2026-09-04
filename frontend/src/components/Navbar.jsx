@@ -1,48 +1,47 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { Truck, Droplet, Users, Code, Calendar } from 'lucide-react';
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Droplets, LogOut, User } from 'lucide-react';
+import { AuthContext } from '../context/AuthContext';
 
-export default function Navbar() {
+const Navbar = () => {
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <nav className="navbar">
-      <div className="nav-content">
-        <NavLink to="/" className="brand-logo">
-          <div className="brand-icon-wrapper">
-            <Truck size={22} />
-          </div>
-          <div>
-            <div className="brand-title">WaterWatch Polonnaruwa</div>
-            <div className="brand-subtitle">Member 2: Bowser & Delivery Operations</div>
-          </div>
-        </NavLink>
-
-        <ul className="nav-links">
-          <li>
-            <NavLink to="/" end className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <Calendar size={16} />
-              <span>Deliveries</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/bowsers" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <Truck size={16} />
-              <span>Bowser Fleet</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/resident-preview" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <Users size={16} />
-              <span>Resident View</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/api-docs" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <Code size={16} />
-              <span>API Specs</span>
-            </NavLink>
-          </li>
-        </ul>
+      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Link to="/" className="navbar-brand">
+          <Droplets size={28} />
+          WaterWatch
+        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {user ? (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <User size={18} className="text-muted" />
+                <span className="font-semibold text-sm">{user.name}</span>
+                {user.role === 'admin' && (
+                  <span className="status-badge status-Critical" style={{ padding: '0.2rem 0.5rem', fontSize: '0.7rem' }}>Admin</span>
+                )}
+              </div>
+              <button onClick={handleLogout} className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.875rem' }}>
+                <LogOut size={16} /> Logout
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="btn btn-primary" style={{ padding: '0.4rem 1rem' }}>
+              Log In
+            </Link>
+          )}
+        </div>
       </div>
     </nav>
   );
-}
+};
+
+export default Navbar;
