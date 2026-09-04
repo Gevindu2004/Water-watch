@@ -16,7 +16,10 @@ import {
   Cpu
 } from 'lucide-react';
 
+import { useDistrict } from '../context/DistrictContext';
+
 export default function AdminDashboard() {
+  const { selectedDistrict } = useDistrict();
   const [stats, setStats] = useState({
     totalTanks: 4,
     criticalTanks: 1,
@@ -32,7 +35,7 @@ export default function AdminDashboard() {
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      const res = await adminService.getDashboard();
+      const res = await adminService.getDashboard(selectedDistrict);
       if (res.data) {
         setStats(res.data.stats || stats);
         setCriticalTanks(res.data.criticalTanks || []);
@@ -40,7 +43,6 @@ export default function AdminDashboard() {
       }
     } catch (err) {
       console.warn("Using fallback demo dashboard data:", err);
-      // Fallback fallback data if API returns mock
       setStats({
         totalTanks: 4,
         criticalTanks: 1,
@@ -53,8 +55,8 @@ export default function AdminDashboard() {
         { id: 'tnk-1', villageId: 'v-siripura', name: 'Siripura Central Storage', levelPercentage: 18, status: 'CRITICAL', capacity: 50000, currentVolume: 9000 }
       ]);
       setCriticalVillagesList([
-        { villageId: 'v-siripura', name: 'Siripura', priorityScore: 91, status: 'CRITICAL', daysWithoutWater: 4, population: 4200 },
-        { villageId: 'v-medirigiriya', name: 'Medirigiriya Block B', priorityScore: 78, status: 'HIGH', daysWithoutWater: 3, population: 6100 }
+        { villageId: 'v-siripura', name: 'Siripura (Polonnaruwa)', priorityScore: 91, status: 'CRITICAL', daysWithoutWater: 4, population: 4200 },
+        { villageId: 'v-mihintale', name: 'Mihintale (Anuradhapura)', priorityScore: 88, status: 'CRITICAL', daysWithoutWater: 4, population: 5800 }
       ]);
     } finally {
       setLoading(false);
@@ -63,7 +65,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [selectedDistrict]);
 
   return (
     <div style={{ padding: '2rem 2rem 4rem 2rem', maxWidth: '1400px', margin: '0 auto' }}>

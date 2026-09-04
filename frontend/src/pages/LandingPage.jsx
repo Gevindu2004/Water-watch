@@ -13,17 +13,24 @@ import {
   CheckCircle2,
   Sparkles,
   AlertTriangle,
-  Sun,
   Flame,
-  Info
+  Layers,
+  Cpu,
+  BarChart3,
+  Compass,
+  ShieldAlert,
+  Server
 } from 'lucide-react';
+import { useDistrict } from '../context/DistrictContext';
 
 export default function LandingPage() {
+  const { selectedDistrict, setSelectedDistrict, DRY_ZONE_DISTRICTS } = useDistrict();
   const [selectedVillage, setSelectedVillage] = useState('Siripura');
   const [demoQueueCount, setDemoQueueCount] = useState(86);
 
   const villageData = {
     Siripura: {
+      district: 'Polonnaruwa',
       bowserId: 'WB-102',
       eta: '2:00 PM',
       capacity: 5000,
@@ -31,402 +38,415 @@ export default function LandingPage() {
       status: 'On The Way',
       waiting: demoQueueCount,
       driver: 'Sarath Kumara (+94 77 123 4567)',
-      tankLevel: '18% (Critical)'
+      tankLevel: '18% (Critical)',
+      tankName: 'Minneriya Tank'
+    },
+    Mihintale: {
+      district: 'Anuradhapura',
+      bowserId: 'WB-202',
+      eta: '1:30 PM',
+      capacity: 8000,
+      distributionPoint: 'Mihintale Maha Vidyalaya Grounds',
+      status: 'Distributing',
+      waiting: 140,
+      driver: 'Rohan Rathnayake (+94 77 999 1122)',
+      tankLevel: '15% (Critical)',
+      tankName: 'Nuwara Wewa'
+    },
+    Suriyawewa: {
+      district: 'Hambantota',
+      bowserId: 'WB-301',
+      eta: '4:00 PM',
+      capacity: 10000,
+      distributionPoint: 'Suriyawewa Hospital Grounds',
+      status: 'Scheduled',
+      waiting: 210,
+      driver: 'Jagath Rajapaksha (+94 78 222 3344)',
+      tankLevel: '12% (Critical)',
+      tankName: 'Ridiyagama Reservoir'
+    },
+    Anamaduwa: {
+      district: 'Puttalam',
+      bowserId: 'WB-401',
+      eta: '5:15 PM',
+      capacity: 7000,
+      distributionPoint: 'Anamaduwa Central Junction',
+      status: 'Scheduled',
+      waiting: 180,
+      driver: 'Chaminda Fernando (+94 75 888 7766)',
+      tankLevel: '17% (Critical)',
+      tankName: 'Tabbowa Tank'
+    },
+    Vavunathivu: {
+      district: 'Batticaloa',
+      bowserId: 'WB-501',
+      eta: '3:45 PM',
+      capacity: 9000,
+      distributionPoint: 'Vavunathivu School Yard',
+      status: 'On The Way',
+      waiting: 195,
+      driver: 'Kanthasamy Thiru (+94 77 666 5544)',
+      tankLevel: '14% (Critical)',
+      tankName: 'Unnichchai Tank'
     },
     Bakamuna: {
+      district: 'Polonnaruwa',
       bowserId: 'WB-105',
       eta: '3:30 PM',
-      capacity: 5000,
+      capacity: 8000,
       distributionPoint: 'Bakamuna Maha Vidyalaya',
       status: 'On The Way',
       waiting: 120,
       driver: 'Nimal Perera (+94 71 987 6543)',
-      tankLevel: '42% (Low)'
-    },
-    Welikanda: {
-      bowserId: 'WB-108',
-      eta: '5:00 PM',
-      capacity: 3000,
-      distributionPoint: 'Welikanda Divisional Secretariat',
-      status: 'Completed',
-      waiting: 45,
-      driver: 'Kamal Silva (+94 76 555 1234)',
-      tankLevel: '65% (Normal)'
-    },
-    Medirigiriya: {
-      bowserId: 'WB-112',
-      eta: '6:15 PM',
-      capacity: 6000,
-      distributionPoint: 'Medirigiriya Hospital Junction',
-      status: 'Scheduled',
-      waiting: 95,
-      driver: 'Sunil Jayasinghe (+94 70 333 4455)',
-      tankLevel: '35% (Warning)'
-    },
-    Hingurakgoda: {
-      bowserId: 'WB-115',
-      eta: '7:00 PM',
-      capacity: 5000,
-      distributionPoint: 'Hingurakgoda Water Depot',
-      status: 'Scheduled',
-      waiting: 60,
-      driver: 'K. Silva (+94 77 999 8888)',
-      tankLevel: '78% (Normal)'
+      tankLevel: '35% (Warning)',
+      tankName: 'Kaudulla Tank'
     }
   };
 
-  const currentInfo = villageData[selectedVillage];
-  const lPerPerson = Math.round(currentInfo.capacity / currentInfo.waiting);
-  const isSufficient = currentInfo.capacity >= (currentInfo.waiting * 50);
+  const currentVillage = villageData[selectedVillage] || villageData['Siripura'];
 
   return (
-    <div style={{ background: '#090d16', color: '#f8fafc', minHeight: '100vh', position: 'relative' }}>
+    <div className="landing-container" style={{ background: '#0b1120', color: '#f8fafc', minHeight: '100vh' }}>
       
-      {/* Background Decorative Glow */}
-      <div style={{
-        position: 'absolute',
-        top: '-10%',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: '1000px',
-        height: '600px',
-        background: 'radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(139, 92, 246, 0.05) 50%, transparent 70%)',
-        pointerEvents: 'none',
-        zIndex: 0
-      }} />
-
       {/* Navigation Header */}
-      <header className="navbar">
+      <nav className="navbar" style={{ borderBottom: '1px solid rgba(0, 242, 254, 0.25)', background: 'rgba(11, 17, 32, 0.95)' }}>
         <div className="nav-content">
           <NavLink to="/" className="brand-logo">
-            <div className="brand-icon-wrapper">
-              <Droplet size={24} />
+            <div className="brand-icon-wrapper" style={{ background: 'linear-gradient(135deg, #00f2fe, #4facfe)' }}>
+              <Droplet size={24} color="#0f172a" />
             </div>
             <div>
-              <div className="brand-title">WaterWatch Polonnaruwa</div>
-              <div className="brand-subtitle">El Niño Drought Response System</div>
+              <div className="brand-title" style={{ letterSpacing: '0.05em' }}>WATERWATCH SRI LANKA</div>
+              <div className="brand-subtitle" style={{ color: '#00f2fe', fontWeight: '700' }}>
+                National Dry Zone Water Emergency & Relief Network
+              </div>
             </div>
           </NavLink>
 
-          <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', fontSize: '0.8rem' }}>
-              <div className="pulse-dot" />
-              <span style={{ color: '#34d399', fontWeight: '600' }}>Operations Active</span>
-            </div>
-
-            <NavLink to="/resident-preview" className="btn btn-secondary btn-sm">
-              <Users size={15} /> Resident Queue
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <NavLink to="/resident-preview" className="btn btn-secondary btn-sm" style={{ borderColor: 'rgba(255,255,255,0.15)' }}>
+              Resident Live Queue
             </NavLink>
-
-            <NavLink to="/login" className="btn btn-primary btn-sm glow-pulse">
-              <ShieldCheck size={15} /> Officer Sign In
+            <NavLink to="/api-docs" className="btn btn-secondary btn-sm" style={{ borderColor: 'rgba(255,255,255,0.15)' }}>
+              <Code size={14} /> API Specs
+            </NavLink>
+            <NavLink to="/login" className="btn btn-primary btn-sm" style={{ background: 'linear-gradient(135deg, #00f2fe, #4facfe)', color: '#0f172a', fontWeight: '800' }}>
+              Officer & Admin Portal Login
             </NavLink>
           </div>
         </div>
-      </header>
+      </nav>
 
-      {/* Hero Section */}
-      <section style={{
-        padding: '4rem 1.5rem 3rem',
-        maxWidth: '1280px',
-        margin: '0 auto',
-        textAlign: 'center',
-        position: 'relative',
-        zIndex: 1
-      }}>
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '0.55rem',
-          padding: '0.45rem 1.1rem',
-          borderRadius: '30px',
-          background: 'rgba(244, 63, 94, 0.15)',
-          border: '1px solid rgba(244, 63, 94, 0.3)',
-          color: '#fb7185',
-          fontSize: '0.85rem',
-          fontWeight: '700',
-          marginBottom: '1.75rem',
-          backdropFilter: 'blur(8px)'
-        }}>
-          <Flame size={16} /> 🚨 EL NIÑO DROUGHT RESPONSE PLATFORM — POLONNARUWA DISTRICT
-        </div>
-
-        <h1 className="shimmer-text" style={{
-          fontSize: 'clamp(2.5rem, 5vw, 4rem)',
-          fontWeight: '900',
-          lineHeight: '1.1',
-          maxWidth: '960px',
-          margin: '0 auto 1.5rem'
-        }}>
-          Intelligent Water Bowser Dispatch & Crisis Coordination
-        </h1>
-
-        <p style={{
-          fontSize: '1.15rem',
-          color: '#94a3b8',
-          maxWidth: '780px',
-          margin: '0 auto 2.5rem',
-          lineHeight: '1.6'
-        }}>
-          Mitigating severe El Niño drought impacts across Sri Lanka's North Central Province. Coordinating emergency water tankers for Siripura, Bakamuna, Welikanda, Medirigiriya, and Hingurakgoda.
-        </p>
-
-        <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <NavLink to="/login" className="btn btn-primary glow-pulse" style={{ padding: '0.9rem 2rem', fontSize: '1.05rem' }}>
-            <ShieldCheck size={20} /> Enter Officer Portal <ArrowRight size={18} />
-          </NavLink>
+      {/* Hero Banner Section */}
+      <section style={{ padding: '4rem 2rem', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(520px, 1fr))', gap: '3.5rem', alignItems: 'center' }}>
           
-          <NavLink to="/resident-preview" className="btn btn-secondary" style={{ padding: '0.9rem 2rem', fontSize: '1.05rem' }}>
-            <Users size={20} /> Resident Queue & Schedule
-          </NavLink>
-        </div>
-      </section>
+          {/* Left Column Text & Controls */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+              <span className="badge badge-critical" style={{ fontSize: '0.85rem', padding: '0.4rem 0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Flame size={15} /> EL NIÑO DROUGHT ALERT • NATIONWIDE DRY ZONE COVERAGE
+              </span>
+              <span style={{ color: '#00f2fe', fontSize: '0.85rem', fontWeight: '700' }}>
+                SRI LANKA WATER BOARD INTEGRATION
+              </span>
+            </div>
 
-      {/* Featured El Niño Crisis Banner & Photo Showcase */}
-      <section style={{ maxWidth: '1280px', margin: '0 auto 4rem', padding: '0 1.5rem', position: 'relative', zIndex: 1 }}>
-        <div style={{
-          position: 'relative',
-          borderRadius: '24px',
-          overflow: 'hidden',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          boxShadow: '0 30px 60px rgba(0, 0, 0, 0.6)'
-        }}>
-          <img 
-            src="/elnino-drought.jpg" 
-            alt="El Nino Drought Impact in Sri Lanka Reservoir" 
-            style={{
-              width: '100%',
-              height: '420px',
-              objectFit: 'cover',
-              filter: 'brightness(0.75) contrast(1.15)'
-            }}
-          />
+            <h1 className="gradient-text" style={{ fontSize: '3.25rem', fontWeight: '900', lineHeight: '1.1', marginBottom: '1.25rem' }}>
+              NATIONWIDE DRY ZONE WATER DISPATCH & MONITORING SYSTEM
+            </h1>
 
-          {/* Dark Gradient Overlay */}
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to top, rgba(9, 13, 22, 0.95) 0%, rgba(9, 13, 22, 0.4) 50%, transparent 100%)',
-            display: 'flex',
-            alignItems: 'flex-end',
-            padding: '2.5rem'
-          }}>
-            <div style={{ maxWidth: '800px' }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(244, 63, 94, 0.25)', color: '#fb7185', padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '700', border: '1px solid rgba(244, 63, 94, 0.4)', marginBottom: '0.75rem' }}>
-                <Sun size={14} /> FIELD PHOTO: DRY RESERVOIR BED AT POLONNARUWA
+            <p style={{ color: '#cbd5e1', fontSize: '1.15rem', lineHeight: '1.65', marginBottom: '2rem' }}>
+              Real-time reservoir capacity tracking, AI multi-factor priority dispatching, and resident water arrival transparency across all <strong>14 Sri Lanka Dry Zone Districts</strong>.
+            </p>
+
+            {/* Dry Zone District Selector Pills */}
+            <div className="glass-card" style={{ padding: '1.25rem', marginBottom: '2rem', border: '1px solid rgba(0, 242, 254, 0.3)', background: 'rgba(15, 23, 42, 0.8)' }}>
+              <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#00f2fe', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Compass size={16} /> ACTIVE DRY ZONE DISTRICT MONITORING SECTORS:
               </div>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.5rem' }}>
-                El Niño Climate Phenomenon Intensifies Dry Zone Crisis
-              </h2>
-              <p style={{ color: '#cbd5e1', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                Prolonged dry spells have reduced major reservoirs in Polonnaruwa to critical levels below 20%. WaterWatch provides automated bowser scheduling to deliver clean drinking water directly to affected village junctions.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Live Interactive Polonnaruwa Village Tracker Preview Widget */}
-      <section style={{ maxWidth: '1280px', margin: '0 auto 4rem', padding: '0 1.5rem', position: 'relative', zIndex: 1 }}>
-        <div className="glass-card" style={{ padding: '2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
-            <div>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <Activity size={22} color="#00f2fe" />
-                Live Village Water Monitor
-              </h2>
-              <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginTop: '0.2rem' }}>
-                Select a village to preview live bowser dispatch, arrival time, and resident queue demand ratio:
-              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                {DRY_ZONE_DISTRICTS.map(d => (
+                  <button 
+                    key={d.id}
+                    className={`btn btn-sm ${selectedDistrict === d.id ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => setSelectedDistrict(d.id)}
+                    style={{ 
+                      fontSize: '0.75rem', 
+                      padding: '0.3rem 0.65rem',
+                      background: selectedDistrict === d.id ? 'linear-gradient(135deg, #00f2fe, #4facfe)' : undefined,
+                      color: selectedDistrict === d.id ? '#0f172a' : undefined,
+                      fontWeight: selectedDistrict === d.id ? '800' : '600'
+                    }}
+                  >
+                    {d.name}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Village Selector Pills */}
-            <div className="filter-pills">
-              {['Siripura', 'Bakamuna', 'Welikanda', 'Medirigiriya', 'Hingurakgoda'].map(v => (
-                <button
-                  key={v}
-                  className={`filter-pill ${selectedVillage === v ? 'active' : ''}`}
-                  onClick={() => setSelectedVillage(v)}
-                >
-                  📍 {v}
-                </button>
-              ))}
+            {/* CTA Action Buttons */}
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <NavLink to="/login" className="btn btn-primary" style={{ padding: '0.9rem 2rem', fontSize: '1.05rem', fontWeight: '800', background: 'linear-gradient(135deg, #00f2fe, #4facfe)', color: '#0f172a', border: 'none' }}>
+                Launch Officer & Admin Portal <ArrowRight size={18} />
+              </NavLink>
+              <NavLink to="/resident-preview" className="btn btn-secondary" style={{ padding: '0.9rem 1.75rem', fontSize: '1.05rem', borderColor: 'rgba(255,255,255,0.2)' }}>
+                View Resident Water Queue
+              </NavLink>
             </div>
           </div>
 
-          {/* Selected Village Real-time Preview Box */}
-          <div style={{
-            background: 'rgba(9, 13, 22, 0.85)',
-            border: '1px solid rgba(0, 242, 254, 0.25)',
-            borderRadius: '16px',
-            padding: '1.75rem',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '1.75rem',
-            alignItems: 'center'
-          }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <span className={`badge badge-${currentInfo.status.replace(/\s+/g, '-')}`}>
-                  {currentInfo.status}
-                </span>
-                <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-                  Nearby Tank: <strong style={{ color: '#fb7185' }}>{currentInfo.tankLevel}</strong>
-                </span>
+          {/* Right Column Image Carousel / Photo Showcase */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            
+            {/* Top Photo: Aerial View of Dry Zone Reservoir */}
+            <div className="glass-card" style={{ padding: '0.75rem', border: '1px solid rgba(0, 242, 254, 0.4)', borderRadius: '1rem', overflow: 'hidden' }}>
+              <div style={{ position: 'relative', borderRadius: '0.75rem', overflow: 'hidden' }}>
+                <img 
+                  src="/dry_zone_reservoir.jpg" 
+                  alt="Ancient Sri Lanka Dry Zone Reservoir Wewa" 
+                  style={{ width: '100%', height: '240px', objectFit: 'cover', display: 'block' }}
+                />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent)', padding: '1rem' }}>
+                  <div style={{ color: '#38bdf8', fontWeight: '800', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <Layers size={15} /> MONITORED DRY ZONE RESERVOIRS
+                  </div>
+                  <div style={{ color: '#f8fafc', fontWeight: '700', fontSize: '1rem', marginTop: '0.2rem' }}>
+                    Parakrama, Minneriya, Nuwara Wewa, Ridiyagama & Tabbowa
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Grid: Bowser Truck & Drought Photo */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+              
+              <div className="glass-card" style={{ padding: '0.75rem', border: '1px solid rgba(59, 130, 246, 0.4)', borderRadius: '1rem', overflow: 'hidden' }}>
+                <img 
+                  src="/water_bowser_truck.jpg" 
+                  alt="Water Bowser Truck Dispatch" 
+                  style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '0.5rem', display: 'block' }}
+                />
+                <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', fontWeight: '700', color: '#60a5fa', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <Truck size={14} /> Fleet Bowser Operations
+                </div>
               </div>
 
-              <h3 style={{ fontSize: '1.6rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.75rem' }}>
-                📍 {selectedVillage} — {currentInfo.distributionPoint}
+              <div className="glass-card" style={{ padding: '0.75rem', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '1rem', overflow: 'hidden' }}>
+                <img 
+                  src="/elnino-drought.jpg" 
+                  alt="El Nino Drought Sri Lanka" 
+                  style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '0.5rem', display: 'block' }}
+                />
+                <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', fontWeight: '700', color: '#f87171', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <AlertTriangle size={14} /> Emergency Drought Response
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* National Metric Overview Cards */}
+      <section style={{ maxWidth: '1400px', margin: '0 auto 4rem auto', padding: '0 2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
+          
+          <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid #00f2fe' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#94a3b8', fontSize: '0.85rem', fontWeight: '700' }}>
+              <span>DRY ZONE DISTRICTS</span>
+              <Compass size={20} color="#00f2fe" />
+            </div>
+            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#00f2fe', margin: '0.5rem 0' }}>14</div>
+            <div style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>North Central, Northern, Eastern, Southern & Uva</div>
+          </div>
+
+          <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid #3b82f6' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#94a3b8', fontSize: '0.85rem', fontWeight: '700' }}>
+              <span>MONITORED RESERVOIRS</span>
+              <Layers size={20} color="#3b82f6" />
+            </div>
+            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#60a5fa', margin: '0.5rem 0' }}>24+</div>
+            <div style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>Automated level sensors & thresholds</div>
+          </div>
+
+          <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid #ef4444' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#94a3b8', fontSize: '0.85rem', fontWeight: '700' }}>
+              <span>CRITICAL RESERVOIRS</span>
+              <AlertTriangle size={20} color="#ef4444" />
+            </div>
+            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#f87171', margin: '0.5rem 0' }}>6</div>
+            <div style={{ fontSize: '0.8rem', color: '#f87171', fontWeight: '600' }}>Below 20% emergency capacity</div>
+          </div>
+
+          <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid #10b981' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#94a3b8', fontSize: '0.85rem', fontWeight: '700' }}>
+              <span>DAILY BOWSER DELIVERIES</span>
+              <Truck size={20} color="#10b981" />
+            </div>
+            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#34d399', margin: '0.5rem 0' }}>1,480+</div>
+            <div style={{ fontSize: '0.8rem', color: '#34d399' }}>Liters of clean drinking water dispatched</div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* Interactive Live Bowser Tracker Section */}
+      <section style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', padding: '0 2rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <span style={{ color: '#00f2fe', fontWeight: '800', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            INTERACTIVE DEMO
+          </span>
+          <h2 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#f8fafc', marginTop: '0.25rem' }}>
+            Live Village Bowser Arrival Tracker ({selectedDistrict})
+          </h2>
+          <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>
+            Select a drought-affected village below to view real-time arrival estimates and assigned bowsers.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+          {Object.keys(villageData).map(v => (
+            <button
+              key={v}
+              className={`btn ${selectedVillage === v ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setSelectedVillage(v)}
+              style={{
+                background: selectedVillage === v ? 'linear-gradient(135deg, #00f2fe, #4facfe)' : undefined,
+                color: selectedVillage === v ? '#0f172a' : undefined,
+                fontWeight: selectedVillage === v ? '800' : '600'
+              }}
+            >
+              {v} ({villageData[v].district})
+            </button>
+          ))}
+        </div>
+
+        <div className="glass-card" style={{ padding: '2rem', maxWidth: '850px', margin: '0 auto', border: '1px solid rgba(0, 242, 254, 0.4)', boxShadow: '0 0 30px rgba(0, 242, 254, 0.1)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <span className="badge badge-critical" style={{ marginBottom: '0.5rem', display: 'inline-block' }}>
+                {currentVillage.district} District
+              </span>
+              <h3 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#f8fafc', margin: 0 }}>
+                {selectedVillage} Emergency Water Bowser
               </h3>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.95rem' }}>
-                <div className="info-row">
-                  <span className="info-label"><Truck size={16} /> Bowser Tanker:</span>
-                  <span className="info-value" style={{ color: '#00f2fe' }}>🚛 {currentInfo.bowserId} ({currentInfo.capacity.toLocaleString()} L)</span>
-                </div>
-                <div className="info-row">
-                  <span className="info-label"><Clock size={16} /> Estimated Arrival:</span>
-                  <span className="info-value" style={{ color: '#fbbf24' }}>{currentInfo.eta}</span>
-                </div>
-                <div className="info-row">
-                  <span className="info-label"><Users size={16} /> Driver Contact:</span>
-                  <span className="info-value">{currentInfo.driver}</span>
-                </div>
+              <div style={{ fontSize: '0.95rem', color: '#00f2fe', marginTop: '0.25rem', fontWeight: '600' }}>
+                📍 Distribution Point: {currentVillage.distributionPoint}
               </div>
             </div>
 
-            {/* Live Queue Demand Ratio & Interactive Action */}
-            <div style={{
-              background: 'rgba(18, 26, 43, 0.9)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '14px',
-              padding: '1.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1.25rem'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Residents in Queue</div>
-                  <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#ffffff' }}>
-                    {currentInfo.waiting} <span style={{ fontSize: '0.9rem', fontWeight: '400', color: '#94a3b8' }}>people</span>
-                  </div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Supply Ratio</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#00f2fe' }}>
-                    ~{lPerPerson} L <span style={{ fontSize: '0.8rem', fontWeight: '400' }}>/ person</span>
-                  </div>
-                </div>
-              </div>
+            <span className="badge badge-high" style={{ fontSize: '0.9rem', padding: '0.6rem 1.2rem', textTransform: 'uppercase' }}>
+              STATUS: {currentVillage.status}
+            </span>
+          </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(9, 13, 22, 0.6)', padding: '0.6rem 0.9rem', borderRadius: '8px' }}>
-                <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Capacity Sufficiency:</span>
-                <span className="badge" style={{
-                  background: isSufficient ? 'rgba(52, 211, 153, 0.15)' : 'rgba(251, 113, 133, 0.15)',
-                  color: isSufficient ? '#34d399' : '#fb7185',
-                  border: `1px solid ${isSufficient ? 'rgba(52, 211, 153, 0.3)' : 'rgba(251, 113, 133, 0.3)'}`
-                }}>
-                  {isSufficient ? '🟢 DEMAND SATISFIED' : '🔴 DEFICIT RISK'}
-                </span>
-              </div>
-
-              {selectedVillage === 'Siripura' && (
-                <button
-                  className="btn btn-primary"
-                  style={{ width: '100%', padding: '0.75rem' }}
-                  onClick={() => setDemoQueueCount(prev => prev + 1)}
-                >
-                  <Users size={16} /> Test Live Queue (+1 Resident)
-                </button>
-              )}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
+            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.25rem', borderRadius: '0.75rem', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: '600' }}>Assigned Bowser Truck</div>
+              <div style={{ color: '#f8fafc', fontWeight: '800', fontSize: '1.4rem', marginTop: '0.25rem' }}>{currentVillage.bowserId}</div>
+              <div style={{ fontSize: '0.75rem', color: '#00f2fe', marginTop: '0.25rem' }}>Tank Volume: {currentVillage.capacity.toLocaleString()} L</div>
             </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.25rem', borderRadius: '0.75rem', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: '600' }}>Estimated Arrival ETA</div>
+              <div style={{ color: '#38bdf8', fontWeight: '800', fontSize: '1.4rem', marginTop: '0.25rem' }}>{currentVillage.eta}</div>
+              <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.25rem' }}>Driver: {currentVillage.driver}</div>
+            </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.25rem', borderRadius: '0.75rem', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: '600' }}>Nearest Reservoir ({currentVillage.tankName})</div>
+              <div style={{ color: '#f87171', fontWeight: '800', fontSize: '1.4rem', marginTop: '0.25rem' }}>{currentVillage.tankLevel}</div>
+              <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.25rem' }}>Water Shortage Active</div>
+            </div>
+          </div>
+
+          <div style={{ textAlign: 'center', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+            <NavLink to="/resident-preview" className="btn btn-secondary btn-sm">
+              Open Full Resident Transparency Portal <ArrowRight size={14} />
+            </NavLink>
           </div>
         </div>
       </section>
 
-      {/* District Operations Snapshot Bar */}
-      <section style={{ maxWidth: '1280px', margin: '0 auto 4rem', padding: '0 1.5rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
-          <div className="glass-card" style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div className="stat-icon" style={{ background: 'rgba(0, 242, 254, 0.15)', color: '#00f2fe' }}>
-                <Truck size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: '1.8rem', fontWeight: '800' }}>8 Bowsers</div>
-                <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Active Tanker Fleet</div>
-              </div>
-            </div>
+      {/* 4 Member Architecture Showcase Grid */}
+      <section style={{ maxWidth: '1400px', margin: '0 auto 6rem auto', padding: '0 2rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <h2 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#f8fafc' }}>
+            System Component Architecture
+          </h2>
+          <p style={{ color: '#94a3b8', fontSize: '1rem' }}>
+            Four specialized modules working together to resolve water crises nationwide.
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+          
+          {/* Member 1 Card */}
+          <div className="glass-card" style={{ padding: '1.75rem', borderTop: '4px solid #3b82f6' }}>
+            <div style={{ color: '#60a5fa', fontWeight: '800', fontSize: '0.85rem', marginBottom: '0.5rem' }}>MEMBER 1</div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#f8fafc', marginBottom: '0.75rem' }}>
+              Shared Auth & Resident Portal
+            </h3>
+            <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '1.25rem' }}>
+              JWT authentication system (`role = officer`, `role = admin`) and resident shortage report submission.
+            </p>
+            <div style={{ fontSize: '0.8rem', color: '#34d399', fontWeight: '600' }}>✓ Shared Security Middleware</div>
           </div>
 
-          <div className="glass-card" style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div className="stat-icon" style={{ background: 'rgba(52, 211, 153, 0.15)', color: '#34d399' }}>
-                <CheckCircle2 size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: '1.8rem', fontWeight: '800' }}>12 Deliveries</div>
-                <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Scheduled Today</div>
-              </div>
-            </div>
+          {/* Member 2 Card */}
+          <div className="glass-card" style={{ padding: '1.75rem', borderTop: '4px solid #06b6d4' }}>
+            <div style={{ color: '#22d3ee', fontWeight: '800', fontSize: '0.85rem', marginBottom: '0.5rem' }}>MEMBER 2</div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#f8fafc', marginBottom: '0.75rem' }}>
+              Officer & Bowser Operations
+            </h3>
+            <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '1.25rem' }}>
+              Fleet status management (`AVAILABLE`, `ON_JOB`), delivery schedules, and verified shortage queues.
+            </p>
+            <NavLink to="/officer/dashboard" style={{ color: '#00f2fe', fontSize: '0.85rem', fontWeight: '700', textDecoration: 'none' }}>
+              View Officer Portal →
+            </NavLink>
           </div>
 
-          <div className="glass-card" style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div className="stat-icon" style={{ background: 'rgba(251, 191, 36, 0.15)', color: '#fbbf24' }}>
-                <Droplet size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: '1.8rem', fontWeight: '800' }}>60,000 L</div>
-                <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Total Water Allocated</div>
-              </div>
-            </div>
+          {/* Member 3 Card */}
+          <div className="glass-card" style={{ padding: '1.75rem', borderTop: '4px solid #ec4899' }}>
+            <div style={{ color: '#f472b6', fontWeight: '800', fontSize: '0.85rem', marginBottom: '0.5rem' }}>MEMBER 3</div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#f8fafc', marginBottom: '0.75rem' }}>
+              Admin & Tank Analytics
+            </h3>
+            <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '1.25rem' }}>
+              Reservoir water level updater, status threshold rules (`0-19% CRITICAL`), and Recharts 7-day trend history.
+            </p>
+            <NavLink to="/admin/dashboard" style={{ color: '#f472b6', fontSize: '0.85rem', fontWeight: '700', textDecoration: 'none' }}>
+              View Admin Control Center →
+            </NavLink>
           </div>
 
-          <div className="glass-card" style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div className="stat-icon" style={{ background: 'rgba(139, 92, 246, 0.15)', color: '#8b5cf6' }}>
-                <MapPin size={24} />
-              </div>
-              <div>
-                <div style={{ fontSize: '1.8rem', fontWeight: '800' }}>5 Villages</div>
-                <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Drought Coverage Zones</div>
-              </div>
-            </div>
+          {/* Member 4 Card */}
+          <div className="glass-card" style={{ padding: '1.75rem', borderTop: '4px solid #00f2fe' }}>
+            <div style={{ color: '#00f2fe', fontWeight: '800', fontSize: '0.85rem', marginBottom: '0.5rem' }}>MEMBER 4</div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#f8fafc', marginBottom: '0.75rem' }}>
+              AI Priority Dispatch Engine
+            </h3>
+            <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '1.25rem' }}>
+              Dynamic 0-100 score matrix, Gemini decision explanation synthesis, and 1-click bowser dispatch modal.
+            </p>
+            <NavLink to="/admin/smart-priority" style={{ color: '#00f2fe', fontSize: '0.85rem', fontWeight: '700', textDecoration: 'none' }}>
+              View AI Dispatch Matrix →
+            </NavLink>
           </div>
+
         </div>
       </section>
 
       {/* Footer */}
-      <footer style={{
-        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-        padding: '2.5rem 1.5rem',
-        textAlign: 'center',
-        background: '#090d16'
-      }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <div className="brand-icon-wrapper" style={{ width: '32px', height: '32px' }}>
-              <Droplet size={18} />
-            </div>
-            <span style={{ fontWeight: '700', fontSize: '0.95rem' }}>WaterWatch Polonnaruwa</span>
-          </div>
-
-          <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-            Member 2: Water Bowser Fleet & Delivery Operations
-          </div>
-
-          <div style={{ display: 'flex', gap: '1.25rem', fontSize: '0.85rem' }}>
-            <NavLink to="/api-docs" style={{ color: '#00f2fe', textDecoration: 'none', fontWeight: '600' }}>
-              API Specs
-            </NavLink>
-            <NavLink to="/login" style={{ color: '#00f2fe', textDecoration: 'none', fontWeight: '600' }}>
-              Officer Sign In
-            </NavLink>
-          </div>
-        </div>
+      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.08)', padding: '2rem', textAlign: 'center', color: '#64748b', fontSize: '0.85rem' }}>
+        <p>💧 WaterWatch Sri Lanka — National Dry Zone Emergency & Relief Platform</p>
+        <p style={{ fontSize: '0.75rem', marginTop: '0.25rem' }}>Covering Polonnaruwa, Anuradhapura, Hambantota, Puttalam, Mannar, Batticaloa, Ampara, Moneragala & all Sri Lanka Dry Zone Sectors.</p>
       </footer>
+
     </div>
   );
 }

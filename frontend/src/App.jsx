@@ -19,6 +19,7 @@ import TankManagementPage from './pages/TankManagementPage';
 import UserManagementPage from './pages/UserManagementPage';
 import SystemAnalyticsPage from './pages/SystemAnalyticsPage';
 import SmartPriorityDashboard from './pages/SmartPriorityDashboard';
+import OfficerRegistrationPage from './pages/OfficerRegistrationPage';
 
 import './App.css';
 
@@ -59,6 +60,7 @@ function AppRoutes() {
         <Route path="deliveries" element={<DeliveriesDashboard />} />
         <Route path="reports" element={<ShortageReportsPage />} />
         <Route path="smart-priority" element={<SmartPriorityDashboard />} />
+        <Route path="register-officer" element={<OfficerRegistrationPage />} />
       </Route>
 
       {/* Protected Admin Control Center Routes (Member 3 & Member 4) */}
@@ -94,8 +96,6 @@ function AppRoutes() {
     </Routes>
   );
 }
-
-import { DistrictProvider } from './context/DistrictContext';
 
 function App() {
   return (

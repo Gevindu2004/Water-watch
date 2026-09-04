@@ -26,27 +26,41 @@ import {
   Download
 } from 'lucide-react';
 
+import { useDistrict } from '../context/DistrictContext';
+
 export default function SystemAnalyticsPage() {
+  const { selectedDistrict } = useDistrict();
   const [timeRange, setTimeRange] = useState('7d');
 
-  // Chart Data 1: Water Shortages by Village
-  const shortagesData = [
-    { village: 'Siripura', count: 18, severity: 'Critical' },
-    { village: 'Medirigiriya', count: 14, severity: 'High' },
-    { village: 'Bakamuna', count: 9, severity: 'Medium' },
-    { village: 'Welikanda', count: 6, severity: 'Low' },
-    { village: 'Lankapura', count: 4, severity: 'Low' },
-    { village: 'Hingurakgoda', count: 3, severity: 'Low' },
+  // Multi-District Dynamic Datasets
+  const allShortages = [
+    { village: 'Siripura (Polonnaruwa)', district: 'Polonnaruwa', count: 18, severity: 'Critical' },
+    { village: 'Mihintale (Anuradhapura)', district: 'Anuradhapura', count: 16, severity: 'Critical' },
+    { village: 'Suriyawewa (Hambantota)', district: 'Hambantota', count: 15, severity: 'Critical' },
+    { village: 'Anamaduwa (Puttalam)', district: 'Puttalam', count: 13, severity: 'Critical' },
+    { village: 'Medirigiriya (Polonnaruwa)', district: 'Polonnaruwa', count: 14, severity: 'High' },
+    { village: 'Vavunathivu (Batticaloa)', district: 'Batticaloa', count: 11, severity: 'High' },
+    { village: 'Bakamuna (Polonnaruwa)', district: 'Polonnaruwa', count: 9, severity: 'Medium' },
+    { village: 'Rambewa (Anuradhapura)', district: 'Anuradhapura', count: 8, severity: 'Medium' }
   ];
 
+  const shortagesData = selectedDistrict && selectedDistrict !== 'All' 
+    ? allShortages.filter(s => s.district === selectedDistrict)
+    : allShortages;
+
   // Chart Data 2: People Affected per Village
-  const peopleAffectedData = [
-    { village: 'Medirigiriya', people: 6100 },
-    { village: 'Siripura', people: 4200 },
-    { village: 'Bakamuna', people: 3800 },
-    { village: 'Hingurakgoda', people: 3100 },
-    { village: 'Welikanda', people: 2900 },
+  const allPeople = [
+    { village: 'Suriyawewa', district: 'Hambantota', people: 6400 },
+    { village: 'Medirigiriya', district: 'Polonnaruwa', people: 6100 },
+    { village: 'Mihintale', district: 'Anuradhapura', people: 5800 },
+    { village: 'Vavunathivu', district: 'Batticaloa', people: 4500 },
+    { village: 'Siripura', district: 'Polonnaruwa', people: 4200 },
+    { village: 'Anamaduwa', district: 'Puttalam', people: 3900 }
   ];
+
+  const peopleAffectedData = selectedDistrict && selectedDistrict !== 'All' 
+    ? allPeople.filter(p => p.district === selectedDistrict)
+    : allPeople;
 
   // Chart Data 3: Water Volume Delivered vs Required (Liters)
   const volumeTrendData = [

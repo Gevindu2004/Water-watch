@@ -23,7 +23,10 @@ import {
   X
 } from 'lucide-react';
 
+import { useDistrict } from '../context/DistrictContext';
+
 export default function TankManagementPage() {
+  const { selectedDistrict } = useDistrict();
   const [tanks, setTanks] = useState([]);
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,30 +37,30 @@ export default function TankManagementPage() {
 
   // Fallback initial history data for Recharts line chart
   const defaultHistory = [
-    { day: 'Mon', Minneriya: 35, Parakrama: 85, Giritale: 62, Kaudulla: 48 },
-    { day: 'Tue', Minneriya: 30, Parakrama: 83, Giritale: 58, Kaudulla: 45 },
-    { day: 'Wed', Minneriya: 26, Parakrama: 81, Giritale: 55, Kaudulla: 42 },
-    { day: 'Thu', Minneriya: 22, Parakrama: 80, Giritale: 52, Kaudulla: 40 },
-    { day: 'Fri', Minneriya: 20, Parakrama: 79, Giritale: 50, Kaudulla: 38 },
-    { day: 'Sat', Minneriya: 19, Parakrama: 78, Giritale: 48, Kaudulla: 36 },
-    { day: 'Today', Minneriya: 18, Parakrama: 78, Giritale: 45, Kaudulla: 34 },
+    { day: 'Mon', Minneriya: 35, Parakrama: 85, NuwaraWewa: 28, Ridiyagama: 25 },
+    { day: 'Tue', Minneriya: 30, Parakrama: 83, NuwaraWewa: 22, Ridiyagama: 20 },
+    { day: 'Wed', Minneriya: 26, Parakrama: 81, NuwaraWewa: 19, Ridiyagama: 16 },
+    { day: 'Thu', Minneriya: 22, Parakrama: 80, NuwaraWewa: 16, Ridiyagama: 13 },
+    { day: 'Fri', Minneriya: 20, Parakrama: 79, NuwaraWewa: 15, Ridiyagama: 12 },
+    { day: 'Sat', Minneriya: 19, Parakrama: 78, NuwaraWewa: 15, Ridiyagama: 12 },
+    { day: 'Today', Minneriya: 18, Parakrama: 78, NuwaraWewa: 15, Ridiyagama: 12 },
   ];
 
   const fetchTanks = async () => {
     setLoading(true);
     try {
-      const res = await tankService.getAll();
-      if (res.data && res.data.tanks) {
-        setTanks(res.data.tanks);
+      const res = await tankService.getAll(selectedDistrict);
+      if (res.data && (res.data.tanks || res.data.data)) {
+        setTanks(res.data.tanks || res.data.data);
       }
       setHistoryData(defaultHistory);
     } catch (err) {
       console.warn("Using fallback tank list:", err);
       setTanks([
-        { id: 'tnk-1', _id: 'tnk-1', villageId: 'v-siripura', name: 'Minneriya Tank (Siripura Storage)', capacity: 50000, currentVolume: 9000, levelPercentage: 18, status: 'CRITICAL', locationCoordinates: '8.0321° N, 80.9022° E' },
-        { id: 'tnk-2', _id: 'tnk-2', villageId: 'v-medirigiriya', name: 'Parakrama Samudraya Reservoir', capacity: 100000, currentVolume: 78000, levelPercentage: 78, status: 'NORMAL', locationCoordinates: '7.9403° N, 81.0028° E' },
-        { id: 'tnk-3', _id: 'tnk-3', villageId: 'v-bakamuna', name: 'Giritale Feeder Tank', capacity: 40000, currentVolume: 18000, levelPercentage: 45, status: 'LOW', locationCoordinates: '7.9811° N, 80.9231° E' },
-        { id: 'tnk-4', _id: 'tnk-4', villageId: 'v-welikanda', name: 'Kaudulla Sector Tank', capacity: 60000, currentVolume: 20400, levelPercentage: 34, status: 'WARNING', locationCoordinates: '8.1341° N, 80.9288° E' },
+        { id: 'tnk-1', _id: 'tnk-1', district: 'Polonnaruwa', villageId: 'v-siripura', name: 'Minneriya Tank (Polonnaruwa)', capacity: 500000, currentVolume: 90000, levelPercentage: 18, status: 'CRITICAL', locationCoordinates: '8.0321° N, 80.9022° E' },
+        { id: 'tnk-2', _id: 'tnk-2', district: 'Polonnaruwa', villageId: 'v-medirigiriya', name: 'Parakrama Samudraya Reservoir', capacity: 1000000, currentVolume: 780000, levelPercentage: 78, status: 'NORMAL', locationCoordinates: '7.9403° N, 81.0028° E' },
+        { id: 'tnk-5', _id: 'tnk-5', district: 'Anuradhapura', villageId: 'v-mihintale', name: 'Nuwara Wewa Reservoir (Anuradhapura)', capacity: 450000, currentVolume: 67500, levelPercentage: 15, status: 'CRITICAL', locationCoordinates: '8.3451° N, 80.4121° E' },
+        { id: 'tnk-7', _id: 'tnk-7', district: 'Hambantota', villageId: 'v-suriyawewa', name: 'Ridiyagama Reservoir (Hambantota)', capacity: 600000, currentVolume: 72000, levelPercentage: 12, status: 'CRITICAL', locationCoordinates: '6.2110° N, 81.0120° E' },
       ]);
       setHistoryData(defaultHistory);
     } finally {
@@ -67,7 +70,7 @@ export default function TankManagementPage() {
 
   useEffect(() => {
     fetchTanks();
-  }, []);
+  }, [selectedDistrict]);
 
   const getStatusBadge = (percentage) => {
     if (percentage < 20) {

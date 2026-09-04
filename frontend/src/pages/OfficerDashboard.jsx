@@ -15,7 +15,10 @@ import {
 } from 'lucide-react';
 import ScheduleDeliveryModal from './ScheduleDeliveryModal';
 
+import { useDistrict } from '../context/DistrictContext';
+
 export default function OfficerDashboard() {
+  const { selectedDistrict } = useDistrict();
   const [bowsers, setBowsers] = useState([]);
   const [deliveries, setDeliveries] = useState([]);
   const [reports, setReports] = useState([]);
@@ -26,13 +29,13 @@ export default function OfficerDashboard() {
     setLoading(true);
     try {
       const [bRes, dRes, rRes] = await Promise.all([
-        bowserService.getAll(),
-        deliveryService.getAll(),
-        reportService.getAll()
+        bowserService.getAll(selectedDistrict),
+        deliveryService.getAll(selectedDistrict),
+        reportService.getAll(selectedDistrict)
       ]);
-      setBowsers(bRes.data.data || []);
-      setDeliveries(dRes.data.data || []);
-      setReports(rRes.data.data || []);
+      setBowsers(bRes.data.bowsers || bRes.data.data || []);
+      setDeliveries(dRes.data.deliveries || dRes.data.data || []);
+      setReports(rRes.data.reports || rRes.data.data || []);
     } catch (err) {
       console.error('Officer Dashboard fetch error:', err);
     } finally {
@@ -42,7 +45,7 @@ export default function OfficerDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [selectedDistrict]);
 
   const handleStatusChange = async (id, status) => {
     try {

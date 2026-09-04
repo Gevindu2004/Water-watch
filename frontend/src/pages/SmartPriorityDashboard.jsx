@@ -18,7 +18,10 @@ import {
   ArrowRight
 } from 'lucide-react';
 
+import { useDistrict } from '../context/DistrictContext';
+
 export default function SmartPriorityDashboard() {
+  const { selectedDistrict } = useDistrict();
   const [priorities, setPriorities] = useState([]);
   const [aiRecommendation, setAiRecommendation] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,60 +41,66 @@ export default function SmartPriorityDashboard() {
     setFetchingAi(true);
     try {
       // 1. Get priorities
-      const res = await aiService.getPriorities();
-      if (res.data && res.data.priorities) {
-        setPriorities(res.data.priorities);
+      const res = await aiService.getPriorities(selectedDistrict);
+      if (res.data && (res.data.priorities || res.data.data)) {
+        setPriorities(res.data.priorities || res.data.data);
       } else {
         throw new Error("Invalid priorities payload");
       }
     } catch (err) {
       console.warn("Using fallback demo priority matrix:", err);
-      setPriorities([
+      let list = [
         { 
           villageId: 'v-siripura', 
-          villageName: 'Siripura', 
+          villageName: 'Siripura',
+          district: 'Polonnaruwa',
           score: 91, 
           status: 'CRITICAL', 
           tankLevel: 18, 
           daysWithoutWater: 4, 
           population: 4200, 
-          vulnerableFacility: 'Rural Hospital & Maternity Ward',
-          factorBreakdown: { tankWeight: 40, daysWeight: 30, popWeight: 11, facilityWeight: 10 }
+          vulnerableFacility: 'Rural Hospital & Maternity Ward'
+        },
+        { 
+          villageId: 'v-mihintale', 
+          villageName: 'Mihintale South', 
+          district: 'Anuradhapura',
+          score: 88, 
+          status: 'CRITICAL', 
+          tankLevel: 15, 
+          daysWithoutWater: 4, 
+          population: 5800, 
+          vulnerableFacility: 'Mihintale Hospital & Hostel'
+        },
+        { 
+          villageId: 'v-suriyawewa', 
+          villageName: 'Suriyawewa Colony', 
+          district: 'Hambantota',
+          score: 85, 
+          status: 'CRITICAL', 
+          tankLevel: 12, 
+          daysWithoutWater: 5, 
+          population: 6400, 
+          vulnerableFacility: 'Primary School & Care Clinic'
         },
         { 
           villageId: 'v-medirigiriya', 
           villageName: 'Medirigiriya Block B', 
+          district: 'Polonnaruwa',
           score: 78, 
           status: 'HIGH', 
-          tankLevel: 22, 
+          tankLevel: 35, 
           daysWithoutWater: 3, 
           population: 6100, 
-          vulnerableFacility: 'Primary School & Day Care',
-          factorBreakdown: { tankWeight: 30, daysWeight: 25, popWeight: 15, facilityWeight: 8 }
-        },
-        { 
-          villageId: 'v-bakamuna', 
-          villageName: 'Bakamuna South', 
-          score: 65, 
-          status: 'MEDIUM', 
-          tankLevel: 35, 
-          daysWithoutWater: 2, 
-          population: 3800, 
-          vulnerableFacility: 'None',
-          factorBreakdown: { tankWeight: 25, daysWeight: 20, popWeight: 10, facilityWeight: 10 }
-        },
-        { 
-          villageId: 'v-welikanda', 
-          villageName: 'Welikanda East', 
-          score: 42, 
-          status: 'LOW', 
-          tankLevel: 55, 
-          daysWithoutWater: 1, 
-          population: 2900, 
-          vulnerableFacility: 'None',
-          factorBreakdown: { tankWeight: 15, daysWeight: 10, popWeight: 10, facilityWeight: 7 }
+          vulnerableFacility: 'Primary School & Day Care'
         }
-      ]);
+      ];
+
+      if (selectedDistrict && selectedDistrict !== 'All') {
+        list = list.filter(item => item.district === selectedDistrict);
+      }
+
+      setPriorities(list);
     } finally {
       setLoading(false);
     }
@@ -116,10 +125,11 @@ export default function SmartPriorityDashboard() {
 
     // 3. Fetch Available Bowsers for Dispatch
     try {
-      const bRes = await bowserService.getAll();
-      if (bRes.data && bRes.data.bowsers) {
-        const available = bRes.data.bowsers.filter(b => b.status === 'AVAILABLE' || b.status === 'IDLE' || b.status === 'READY');
-        setAvailableBowsers(available.length > 0 ? available : bRes.data.bowsers);
+      const bRes = await bowserService.getAll(selectedDistrict);
+      if (bRes.data && (bRes.data.bowsers || bRes.data.data)) {
+        const list = bRes.data.bowsers || bRes.data.data;
+        const available = list.filter(b => b.status === 'AVAILABLE' || b.status === 'IDLE' || b.status === 'Available');
+        setAvailableBowsers(available.length > 0 ? available : list);
       }
     } catch (err) {
       setAvailableBowsers([
@@ -132,7 +142,7 @@ export default function SmartPriorityDashboard() {
 
   useEffect(() => {
     fetchPriorityData();
-  }, []);
+  }, [selectedDistrict]);
 
   const handleOpenDispatchModal = (villageItem) => {
     setSelectedVillageForDispatch(villageItem);

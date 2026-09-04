@@ -17,7 +17,10 @@ import {
 } from 'lucide-react';
 import ScheduleDeliveryModal from './ScheduleDeliveryModal';
 
+import { useDistrict } from '../context/DistrictContext';
+
 export default function DeliveriesDashboard() {
+  const { selectedDistrict } = useDistrict();
   const [deliveries, setDeliveries] = useState([]);
   const [bowsers, setBowsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,11 +37,11 @@ export default function DeliveriesDashboard() {
     setLoading(true);
     try {
       const [delRes, bowRes] = await Promise.all([
-        deliveryService.getAll(),
-        bowserService.getAll()
+        deliveryService.getAll(selectedDistrict),
+        bowserService.getAll(selectedDistrict)
       ]);
-      setDeliveries(delRes.data.data || []);
-      setBowsers(bowRes.data.data || []);
+      setDeliveries(delRes.data.deliveries || delRes.data.data || []);
+      setBowsers(bowRes.data.bowsers || bowRes.data.data || []);
       setError(null);
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
@@ -50,7 +53,7 @@ export default function DeliveriesDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [selectedDistrict]);
 
   const handleStatusChange = async (deliveryId, newStatus) => {
     try {

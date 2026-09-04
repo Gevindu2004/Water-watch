@@ -3,7 +3,10 @@ import { reportService, bowserService } from '../services/api';
 import { AlertTriangle, CheckCircle2, Calendar, RefreshCw, Eye, ShieldCheck, Users, Clock } from 'lucide-react';
 import ScheduleDeliveryModal from './ScheduleDeliveryModal';
 
+import { useDistrict } from '../context/DistrictContext';
+
 export default function ShortageReportsPage() {
+  const { selectedDistrict } = useDistrict();
   const [reports, setReports] = useState([]);
   const [bowsers, setBowsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,11 +17,11 @@ export default function ShortageReportsPage() {
     setLoading(true);
     try {
       const [rRes, bRes] = await Promise.all([
-        reportService.getAll(),
-        bowserService.getAll()
+        reportService.getAll(selectedDistrict),
+        bowserService.getAll(selectedDistrict)
       ]);
-      setReports(rRes.data.data || []);
-      setBowsers(bRes.data.data || []);
+      setReports(rRes.data.reports || rRes.data.data || []);
+      setBowsers(bRes.data.bowsers || bRes.data.data || []);
     } catch (err) {
       console.error('Error fetching shortage reports:', err);
     } finally {
@@ -28,7 +31,7 @@ export default function ShortageReportsPage() {
 
   useEffect(() => {
     fetchReportsData();
-  }, []);
+  }, [selectedDistrict]);
 
   const handleVerify = async (id) => {
     try {

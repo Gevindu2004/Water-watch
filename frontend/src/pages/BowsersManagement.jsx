@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { bowserService } from '../services/api';
 import { Truck, Plus, RefreshCw, Phone, User, MapPin, Edit, CheckCircle, AlertCircle, Search, Trash2 } from 'lucide-react';
 
+import { useDistrict } from '../context/DistrictContext';
+
 export default function BowsersManagement() {
+  const { selectedDistrict } = useDistrict();
   const [bowsers, setBowsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('All');
@@ -17,7 +20,7 @@ export default function BowsersManagement() {
     bowserId: '',
     registrationNumber: '',
     capacity: 5000,
-    currentLocation: 'Polonnaruwa Central Depot',
+    currentLocation: `${selectedDistrict} Central Depot`,
     status: 'Available',
     driverName: '',
     driverContact: ''
@@ -26,8 +29,8 @@ export default function BowsersManagement() {
   const fetchBowsers = async () => {
     setLoading(true);
     try {
-      const res = await bowserService.getAll();
-      setBowsers(res.data.data || []);
+      const res = await bowserService.getAll(selectedDistrict);
+      setBowsers(res.data.bowsers || res.data.data || []);
     } catch (err) {
       console.error('Error fetching bowsers:', err);
     } finally {
@@ -37,7 +40,7 @@ export default function BowsersManagement() {
 
   useEffect(() => {
     fetchBowsers();
-  }, []);
+  }, [selectedDistrict]);
 
   const handleStatusChange = async (id, newStatus) => {
     try {

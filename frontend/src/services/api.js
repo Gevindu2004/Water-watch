@@ -29,7 +29,8 @@ const withDistrict = (url, district) => {
 // Auth Service
 export const authService = {
   login: (credentials) => api.post('/auth/login', credentials),
-  getMe: () => api.get('/auth/me')
+  getMe: () => api.get('/auth/me'),
+  registerOfficer: (details) => api.post('/auth/register-officer', details)
 };
 
 // Bowser API endpoints

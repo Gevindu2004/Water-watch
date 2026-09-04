@@ -11,7 +11,8 @@ import {
   LogOut, 
   ShieldCheck,
   User,
-  MapPin
+  MapPin,
+  UserPlus
 } from 'lucide-react';
 
 export default function OfficerLayout() {
@@ -80,6 +81,12 @@ export default function OfficerLayout() {
               <NavLink to="/officer/reports" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                 <AlertTriangle size={16} />
                 <span>Shortage Reports</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/officer/register-officer" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                <UserPlus size={16} />
+                <span>Register Officer</span>
               </NavLink>
             </li>
             <li>
