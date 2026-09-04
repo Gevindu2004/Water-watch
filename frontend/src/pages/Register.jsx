@@ -6,7 +6,7 @@ import { UserPlus } from 'lucide-react';
 const Register = () => {
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'villager' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -22,7 +22,7 @@ const Register = () => {
     }
 
     try {
-      await register(formData.name, formData.email, formData.password, formData.role);
+      await register(formData.name, formData.email, formData.password);
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || err.response?.data?.errors?.[0]?.msg || 'Registration failed');
@@ -73,17 +73,6 @@ const Register = () => {
               value={formData.password}
               onChange={e => setFormData({ ...formData, password: e.target.value })}
             />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Role (For Hackathon Demo)</label>
-            <select 
-              className="form-select"
-              value={formData.role}
-              onChange={e => setFormData({ ...formData, role: e.target.value })}
-            >
-              <option value="villager">Normal Villager</option>
-              <option value="admin">Administrator</option>
-            </select>
           </div>
           <button type="submit" className="btn btn-primary btn-full mt-2" disabled={loading}>
             {loading ? 'Creating Account...' : 'Sign Up'}

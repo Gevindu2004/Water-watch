@@ -23,11 +23,14 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
+    const isFirstAccount = (await User.countDocuments({})) === 0;
+    const assignedRole = isFirstAccount ? 'admin' : 'villager';
+
     const user = await User.create({
       name,
       email,
       password,
-      role: role || 'villager'
+      role: assignedRole
     });
 
     res.status(201).json({
