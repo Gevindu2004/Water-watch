@@ -1,6 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const connectDB = require('./config/db');
+const User = require('./models/User');
 const Village = require('./models/Village');
 const WaterReport = require('./models/WaterReport');
 const Delivery = require('./models/Delivery');
@@ -10,9 +11,16 @@ const seedData = async () => {
     await connectDB();
     
     // Clear existing data
+    await User.deleteMany();
     await Village.deleteMany();
     await WaterReport.deleteMany();
     await Delivery.deleteMany();
+
+    // Create Demo Users
+    await User.create([
+      { name: 'Admin User', email: 'admin@waterwatch.com', password: 'password123', role: 'admin' },
+      { name: 'Normal Villager', email: 'user@waterwatch.com', password: 'password123', role: 'villager' }
+    ]);
 
     // Create Villages
     const villages = await Village.insertMany([
