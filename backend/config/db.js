@@ -560,18 +560,62 @@ const memoryStore = {
 
 let isMongoConnected = false;
 
+const seedMongoAtlasIfEmpty = async () => {
+  try {
+    const Tank = require('../models/Tank');
+    const Bowser = require('../models/Bowser');
+    const Delivery = require('../models/Delivery');
+    const WaterReport = require('../models/WaterReport');
+    const User = require('../models/User');
+
+    const tankCount = await Tank.countDocuments();
+    if (tankCount === 0 && memoryStore.tanks.length > 0) {
+      console.log('[MongoDB Atlas Seed] Populating reservoir tanks...');
+      await Tank.insertMany(memoryStore.tanks);
+    }
+
+    const bowserCount = await Bowser.countDocuments();
+    if (bowserCount === 0 && memoryStore.bowsers.length > 0) {
+      console.log('[MongoDB Atlas Seed] Populating bowser fleet...');
+      await Bowser.insertMany(memoryStore.bowsers);
+    }
+
+    const deliveryCount = await Delivery.countDocuments();
+    if (deliveryCount === 0 && memoryStore.deliveries.length > 0) {
+      console.log('[MongoDB Atlas Seed] Populating deliveries...');
+      await Delivery.insertMany(memoryStore.deliveries);
+    }
+
+    const reportCount = await WaterReport.countDocuments();
+    if (reportCount === 0 && memoryStore.reports.length > 0) {
+      console.log('[MongoDB Atlas Seed] Populating water shortage reports...');
+      await WaterReport.insertMany(memoryStore.reports);
+    }
+
+    const userCount = await User.countDocuments();
+    if (userCount === 0 && memoryStore.users.length > 0) {
+      console.log('[MongoDB Atlas Seed] Populating initial users...');
+      await User.insertMany(memoryStore.users);
+    }
+    console.log('[MongoDB Atlas Seed] ✅ Database synchronized with all Dry Zone datasets!');
+  } catch (seedErr) {
+    console.warn('[MongoDB Atlas Seed Note]', seedErr.message);
+  }
+};
+
 const connectDB = async () => {
   const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/waterwatch';
   try {
     mongoose.set('strictQuery', false);
     await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 2000
+      serverSelectionTimeoutMS: 10000
     });
     isMongoConnected = true;
-    console.log(`[MongoDB] Connected successfully to ${uri}`);
+    console.log(`[MongoDB] Connected successfully to Atlas Cluster (${uri.replace(/:([^@]+)@/, ':****@')})`);
+    await seedMongoAtlasIfEmpty();
   } catch (err) {
     isMongoConnected = false;
-    console.warn(`[MongoDB Warning] Could not connect to MongoDB (${err.message}).`);
+    console.warn(`[MongoDB Warning] Could not connect to MongoDB Atlas (${err.message}).`);
     console.log(`[Fallback] Server running in high-performance national dry zone memory store mode.`);
   }
 };
@@ -579,3 +623,4 @@ const connectDB = async () => {
 const getMongoStatus = () => isMongoConnected;
 
 module.exports = { connectDB, memoryStore, getMongoStatus };
+
