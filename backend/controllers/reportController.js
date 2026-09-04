@@ -55,24 +55,20 @@ const verifyReport = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllReports, verifyReport };
-
-exports.createReport = async (req, res) => {
+const getVillageReports = async (req, res, next) => {
   try {
-    const newReport = new WaterReport(req.body);
-    const savedReport = await newReport.save();
-    res.status(201).json(savedReport);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    if (getMongoStatus()) {
+      const reports = await WaterReport.find({ village: req.params.villageId }).sort({ createdAt: -1 });
+      return res.status(200).json(reports);
+    }
+
+    const reports = memoryStore.waterReports
+      .filter(report => report.village === req.params.villageId)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return res.status(200).json(reports);
+  } catch (error) {
+    next(error);
   }
 };
 
-exports.getVillageReports = async (req, res) => {
-  try {
-    const reports = await WaterReport.find({ village: req.params.villageId })
-                                     .sort({ createdAt: -1 });
-    res.json(reports);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+module.exports = { getAllReports, verifyReport, getVillageReports };
