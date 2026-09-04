@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { bowserService } from '../services/api';
-import { Truck, Plus, RefreshCw, Phone, User, MapPin, Edit, CheckCircle, AlertCircle, Search } from 'lucide-react';
+import { Truck, Plus, RefreshCw, Phone, User, MapPin, Edit, CheckCircle, AlertCircle, Search, Trash2 } from 'lucide-react';
 
 export default function BowsersManagement() {
   const [bowsers, setBowsers] = useState([]);
@@ -45,6 +45,17 @@ export default function BowsersManagement() {
       fetchBowsers();
     } catch (err) {
       alert('Failed to update bowser status: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
+  const handleDelete = async (id, bowserId) => {
+    if (window.confirm(`Are you sure you want to deactivate/delete Bowser ${bowserId}?`)) {
+      try {
+        await bowserService.delete(id || bowserId);
+        fetchBowsers();
+      } catch (err) {
+        alert('Failed to delete bowser: ' + (err.response?.data?.message || err.message));
+      }
     }
   };
 
@@ -222,30 +233,22 @@ export default function BowsersManagement() {
 
                 <div className="card-body">
                   <div className="info-row">
-                    <span className="info-label">
-                      <Truck size={15} /> Water Capacity:
-                    </span>
+                    <span className="info-label"><Truck size={15} /> Water Capacity:</span>
                     <span className="info-value">{b.capacity.toLocaleString()} Liters</span>
                   </div>
 
                   <div className="info-row">
-                    <span className="info-label">
-                      <MapPin size={15} /> Current Location:
-                    </span>
+                    <span className="info-label"><MapPin size={15} /> Current Location:</span>
                     <span className="info-value">{b.currentLocation}</span>
                   </div>
 
                   <div className="info-row">
-                    <span className="info-label">
-                      <User size={15} /> Assigned Driver:
-                    </span>
+                    <span className="info-label"><User size={15} /> Assigned Driver:</span>
                     <span className="info-value">{b.driverName}</span>
                   </div>
 
                   <div className="info-row">
-                    <span className="info-label">
-                      <Phone size={15} /> Driver Contact:
-                    </span>
+                    <span className="info-label"><Phone size={15} /> Driver Contact:</span>
                     <span className="info-value">{b.driverContact}</span>
                   </div>
                 </div>
@@ -272,6 +275,15 @@ export default function BowsersManagement() {
                   title="Edit Bowser Details"
                 >
                   <Edit size={14} /> Edit
+                </button>
+
+                <button
+                  className="btn btn-secondary btn-sm"
+                  style={{ color: '#fb7185', borderColor: 'rgba(251, 113, 133, 0.3)' }}
+                  onClick={() => handleDelete(b._id, b.bowserId)}
+                  title="Deactivate / Delete Bowser"
+                >
+                  <Trash2 size={14} />
                 </button>
               </div>
             </div>
